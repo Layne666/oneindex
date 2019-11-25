@@ -11,7 +11,10 @@ class one{
 	}
 
 	static function cache_refresh(){
-		oneindex::refresh_cache(get_absolute_path(config('onedrive_root')));
+		//oneindex::refresh_cache(get_absolute_path(config('onedrive_root')));
+		cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+        // 清除php文件缓存
+        cache::clear_opcache();
 	}
 
 	static function token_refresh(){

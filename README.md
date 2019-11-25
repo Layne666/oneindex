@@ -2,7 +2,8 @@
 
 > Onedrive Directory Index
 
-## 功能：
+## 功能
+
 不占用服务器空间，不走服务器流量，  
 
 直接列出 OneDrive 目录，文件直链下载。  
@@ -21,8 +22,11 @@ rewrite ^/(.*)$ /index.php?/$1 last;
 }
 ```
 
-## 预览图
+## 设置修改
 
-![](http://file.layne666.cn/img/20191125233848.png)
+1. 网站主题 选择 nexmoe
+2. 缓存类型 选择 filecache
+
+## 预览图
 
 ![](http://file.layne666.cn/img/20191125233913.png)
