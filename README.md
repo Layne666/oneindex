@@ -1,5 +1,5 @@
-# OneIndex
-Onedrive Directory Index
+# <h1 align="center"><a href=" https://pan.layne666.cn" target="_blank">OneIndex</a></h1>
+> Onedrive Directory Index
 
 ## 功能：
 不占用服务器空间，不走服务器流量，  
