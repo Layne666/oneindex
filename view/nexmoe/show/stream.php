@@ -93,7 +93,8 @@ $types = [
 	'myz'=>"application/myz"
 ];
 //大于 5M 跳转为直连下载
-if($item['size'] > 5242880){
+//改为大于 500M ，然后把pdf配到直接输出栏下即可在线观看
+if($item['size'] > 524288000){
 	header('Location: '.$item['downloadUrl']);exit();
 }
 $type = empty($types[$ext])?"application/octet-stream":$types[$ext];
