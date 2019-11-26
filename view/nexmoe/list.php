@@ -176,6 +176,7 @@ function thumb(){
 				var thumb =(href.indexOf('?') == -1)?'?t=220':'&t=220';
 				$(this).hide();
 				$(this).parent().parent().parent().css("background","url("+href+thumb+")  no-repeat center top");
+				$(this).parent().parent().parent().css("background-size","cover");
 			}
 		});
 	}
