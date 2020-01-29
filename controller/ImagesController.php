@@ -12,9 +12,10 @@ class ImagesController{
 	
 	function index(){
 		if($this->is_image($_FILES["file"]) ){
-		    $filename = $_FILES["file"]['name'];
+		    //$filename = $_FILES["file"]['name'];
+		    $filename = $this->generateRandomString(10).'.'.substr(strrchr($_FILES["file"]['name'], '.'), 1);
 			$content = file_get_contents( $_FILES["file"]['tmp_name']);
-			$remotepath =  'images/'.date('Y/m/d/').$this->generateRandomString(10).'/';
+			$remotepath =  'images/'.date('Y/m/d/');
 			$remotefile = $remotepath.$filename;
 			$result = onedrive::upload(config('onedrive_root').$remotefile, $content);
 			
