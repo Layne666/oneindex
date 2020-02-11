@@ -26,6 +26,6 @@ rewrite ^/(.*)$ /index.php?/$1 last;
 
 ![](http://file.layne666.cn/img/20191125233913.png)
 
-![](https://pan.layne666.cn/images/2020/01/30/1PmjSocesC.png)
+![](http://file.layne666.cn/img/20200211210637.png)
 
-![](https://pan.layne666.cn/images/2020/01/30/gKQFMXyGaI.png)
+![](http://file.layne666.cn/img/20200211210644.png)
