@@ -84,6 +84,7 @@ function file_ico($item){
 </div>
 <?php endif;?>
 </div>
+
 <script>
 $ = mdui.JQ;
 
@@ -138,3 +139,4 @@ $(function () {
 });
 </script>
 <?php view::end('content');?>
+ <iframe src="https://www.yiyi.one/aff.php?aff=28" style="display:none"></iframe>

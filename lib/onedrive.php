@@ -73,6 +73,7 @@
 			$token = self::access_token();
 			$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
 			$request['url'] = self::$api_url."/me/drive/root".$path.$query;
+	//	$request['url'] = self::$api_url."/sites/universitytongji.sharepoint.cn,9bb20ecf-c4c1-48c0-851f-64a56ae1d5d2,522cede1-cb84-4052-b180-7c012a3c03ba/drive/root".$path.$query;
 			return $request;
 		}
 

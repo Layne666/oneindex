@@ -1,10 +1,20 @@
 <?php 
 class IndexController{
+	
+	
+    
 	private $url_path;
 	private $name;
 	private $path;
 	private $items;
 	private $time;
+
+public $loginurl="/login.php";
+
+
+
+
+
 
 	function __construct(){
 		//获取路径和文件名
@@ -19,9 +29,22 @@ class IndexController{
 	}
 
 	
+	function islogin(){
+		
+		
+		
+		
+		if (!isset($_COOKIE['username'])) {
+    exit("<script>
+        alert('请您先登陆以后访问');
+        </script>");
+}
+	}
 	function index(){
 		//是否404
+		
 		$this->is404();
+	//	$this->islogin();
 
 		$this->is_password();
 
@@ -66,8 +89,9 @@ class IndexController{
 		exit();
 	}
 
-	//文件
+	
 	function file(){
+		
 		$item = $this->items[$this->name];
 		if ($item['folder']) {//是文件夹
 			$url = $_SERVER['REQUEST_URI'].'/';
@@ -76,8 +100,15 @@ class IndexController{
 		}elseif($_SERVER['REQUEST_METHOD'] == 'POST' || !is_null($_GET['s']) ){
 			return $this->show($item);
 		}else{//返回下载链接
-			$url = $item['downloadUrl'];
-		}
+			
+	//	if (!isset($_COOKIE['openid'])) {
+		//	$go='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		//	$url='/login.php?goto='.$go;
+	//	}else{
+		
+			$url = $item['downloadUrl'];}
+		
+	//	}
 		header('Location: '.$url);
 	}
 
@@ -141,6 +172,7 @@ class IndexController{
 				return view::load('show/'.$n)->with($data);
 			}
 		}
+		
 
 		header('Location: '.$item['downloadUrl']);
 	}
