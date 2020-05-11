@@ -5,7 +5,7 @@
 		static $redirect_uri;
 		static $api_url = 'https://graph.microsoft.com/v1.0';
 		static $oauth_url = 'https://login.microsoftonline.com/common/oauth2/v2.0';
-
+static $typeurl;
 		//验证URL，浏览器访问、授权
 		static function authorize_url(){
 			$client_id = self::$client_id;
@@ -70,11 +70,25 @@
 		static function request($path="/", $query=""){
 			$path = self::urlencode($path);
 			$path = empty($path)?'/':":/{$path}:/";
+			
 			$token = self::access_token();
 			$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
-			$request['url'] = self::$api_url."/me/drive/root".$path.$query;
-	//	$request['url'] = self::$api_url."/sites/universitytongji.sharepoint.cn,9bb20ecf-c4c1-48c0-851f-64a56ae1d5d2,522cede1-cb84-4052-b180-7c012a3c03ba/drive/root".$path.$query;
-			return $request;
+			$filess = ROOT . 'config/sharepoint.php';
+	if (file_exists($filess)){
+	    $se=include($filess);
+	    onedrive::$typeurl=$se["0"];
+	   
+	    
+	}else{
+	       onedrive::$typeurl="https://microsoftgraph.chinacloudapi.cn/v1.0/me/drive/root".$path.$query;;
+	}
+
+			$request['url'] =self::$typeurl;
+		//	$request['url'] = self::$api_url."/me/drive/root".$path.$query;
+		
+	//$request['url'] = self::$api_url."/sites/alphaone.sharepoint.cn,a0031d38-3ee4-4e22-87e3-c5ca1825419a,eda2d4bf-9dd2-4703-a606-5ff84bbd1c5b/drive/root".$path.$query;
+	
+		return $request;
 		}
 
 		

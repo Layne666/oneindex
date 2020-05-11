@@ -10,7 +10,7 @@
 	<div class="mdui-typo">
       <h4 class="doc-article-title">
 	    填入<code>client_id</code>和<code>client_secret</code>,
-      	<a href="<?php echo $app_url;?>" target="_blank" class="mdui-btn mdui-color-theme-accent mdui-ripple"><i class="mdui-icon material-icons">&#xe89e;</i> 获取应用ID和机密(分两个页面显示，请注意保存)</a>
+      	<a href="https://azure.cn" target="_blank" class="mdui-btn mdui-color-theme-accent mdui-ripple"><i class="mdui-icon material-icons">&#xe89e;</i> 不支持国际版,世纪互联无需填写或者点此注册</a>
       </h4>
     </div>
 
@@ -19,14 +19,14 @@
 			<i class="mdui-icon material-icons">https</i>
 			<label class="mdui-textfield-label">应用机密(client secret)</label>
 			<input type="text" type="text" class="mdui-textfield-input" name="client_secret" required value="v4[Nq:4=rmFS78BwYi[@x3sGk-iY.U:S"/>
-			<div class="mdui-textfield-error">应用机密不能为空</div>
+			<div class="mdui-textfield-error"></div>
 		</div>
 		<br>
 		<div class="mdui-textfield mdui-textfield-floating-label">
 		  	<i class="mdui-icon material-icons">&#xe5c3;</i>
 		  	<label class="mdui-textfield-label">应用 ID(client_id)</label>
 		  	<input type="text" class="mdui-textfield-input" name="client_id" required value="3447f073-eef3-4c60-bb68-113a86f2c39a"/>
-		  	<div class="mdui-textfield-error">应用 ID不能为空</div>
+		  	<div class="mdui-textfield-error"></div>
 		</div>
 		<br>
 
