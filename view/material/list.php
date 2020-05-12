@@ -84,6 +84,7 @@ function file_ico($item){
 </div>
 <?php endif;?>
 </div>
+
 <script>
 $ = mdui.JQ;
 

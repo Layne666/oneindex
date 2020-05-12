@@ -97,6 +97,7 @@
 			$item = self::file($path);
 			if(!empty($item['downloadUrl'])){
 				return $item['downloadUrl'];
+		
 			}
 			return false;
 		}

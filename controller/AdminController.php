@@ -4,10 +4,10 @@ class AdminController{
 	static $default_config = array(
 	  'site_name' =>'OneIndex',
 	  'password' => 'oneindex',
-	  'style'=>'nexmoe',
+	  'style'=>'material',
 	  'onedrive_root' =>'',
 	  'cache_type'=>'filecache',
-	  'cache_expire_time' => 3600,
+	  'cache_expire_time' => 3580,
 	  'cache_refresh_time' => 600,
 	  'root_path' => '',
 	  'show'=> array (
@@ -130,7 +130,7 @@ class AdminController{
 		$show = config('show');
 		return view::load('show')->with('names', $names)->with('show', $show);
 	}
-
+/*
 	function setpass(){
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			if($_POST['old_pass'] == config('password')){
@@ -146,6 +146,7 @@ class AdminController{
 		}
 		return view::load('setpass')->with('message', $message);
 	}
+	*/
 	
 	function install(){
 		if(!empty($_GET['code'])){
@@ -179,12 +180,12 @@ class AdminController{
 			config('redirect_uri',$_POST['redirect_uri']);
 			return view::direct('?step=2');
 		}
-		if($_SERVER['HTTP_HOST'] == 'localhost'){
-			$redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].get_absolute_path(dirname($_SERVER['PHP_SELF']));
-		}else{
+	//	if($_SERVER['HTTP_HOST'] == 'localhost'){
+		//	$redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].get_absolute_path(dirname($_SERVER['PHP_SELF']));
+	//	}else{
 			// 非https,调用ju.tn中转
-			$redirect_uri = 'https://pan.layne666.cn/';
-		}
+			$redirect_uri = 'https://742481030.github.io/onedriverapi.html';
+	//	}
 		
 		$ru = "https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl={$redirect_uri}&platform=option-php";
 		$deepLink = "/quickstart/graphIO?publicClientSupport=false&appName=oneindex&redirectUrl={$redirect_uri}&allowImplicitFlow=false&ru=".urlencode($ru);
