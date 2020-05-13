@@ -1,39 +1,56 @@
 <?php 
 class IndexController{
+	
+	
+    
 	private $url_path;
 	private $name;
 	private $path;
 	private $items;
 	private $time;
 
+public $loginurl="/login.php";
+
+
+
+
+
+
 	function __construct(){
- 		//分页页数
- 		$this->z_page = config('page_item');
-       
+	
+	
 		//获取路径和文件名
+		
+		
+		
+		
 		$paths = explode('/', rawurldecode($_GET['path']));
 		if(substr($_SERVER['REQUEST_URI'], -1) != '/'){
 			$this->name = array_pop($paths);
 		}
-
- 		preg_match_all("(\.page\-([0-9]*)/$)",get_absolute_path(join('/', $paths)),$mat);
- 		if(empty($mat[1][0])){
- 			$this->page = 1;
- 		} else {
- 			$this->page = $mat[1][0];
- 		}
-         
- 		$this->url_path = preg_replace("(\.page\-[0-9]*/$)","",get_absolute_path(join('/', $paths)));
-
+		$this->url_path = get_absolute_path(join('/', $paths));
 		$this->path = get_absolute_path(config('onedrive_root').$this->url_path);
 		//获取文件夹下所有元素
 		$this->items = $this->items($this->path);
 	}
 
 	
+	function islogin(){
+		
+		
+		
+		
+		if (!isset($_COOKIE['username'])) {
+    exit("<script>
+        alert('请您先登陆以后访问');
+        </script>");
+}
+	}
 	function index(){
 		//是否404
+		
 		$this->is404();
+	//	$this->islogin();
 
 		$this->is_password();
 
@@ -78,8 +95,9 @@ class IndexController{
 		exit();
 	}
 
-	//文件
+	
 	function file(){
+		
 		$item = $this->items[$this->name];
 		if ($item['folder']) {//是文件夹
 			$url = $_SERVER['REQUEST_URI'].'/';
@@ -88,12 +106,15 @@ class IndexController{
 		}elseif($_SERVER['REQUEST_METHOD'] == 'POST' || !is_null($_GET['s']) ){
 			return $this->show($item);
 		}else{//返回下载链接
-			if (config('proxy_domain') != ""){
-			$url = str_replace(config('main_domain'),config('proxy_domain'),$item['downloadUrl']);
-			}else {
-				$url = $item['downloadUrl'];
-			}
-		}
+			
+	//	if (!isset($_COOKIE['openid'])) {
+		//	$go='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		//	$url='/login.php?goto='.$go;
+	//	}else{
+		
+			$url = $item['downloadUrl'];}
+		
+	//	}
 		header('Location: '.$url);
 	}
 
@@ -129,21 +150,13 @@ class IndexController{
 			//不在列表中展示
 			unset($this->items['HEAD.md']);
 		}
-
-		$this->totalpage = ceil(count($this->items) / $this->z_page);
-
-		if($this->page*$this->z_page >= count($this->items))
-		$this->page = $this->totalpage;
-
-		return view::load('list')->with('title', config('title_name'))
+		return view::load('list')->with('title', 'index of '. urldecode($this->url_path))
 					->with('navs', $navs)
-					->with('path',join("/", array_map("rawurlencode", explode("/", $this->url_path))))
+					->with('path',join("/", array_map("rawurlencode", explode("/", $this->url_path)))  )
 					->with('root', $root)
-					->with('items', array_slice($this->items,$this->z_page*($this->page-1),$this->z_page))
+					->with('items', $this->items)
 					->with('head',$head)
-					->with('readme',$readme)
- 					->with('page',$this->page)
- 					->with('totalpage',$this->totalpage);
+					->with('readme',$readme);
 	}
 
 	function show($item){
@@ -161,13 +174,11 @@ class IndexController{
 
 		$show = config('show');
 		foreach($show as $n=>$exts){
-			if ($ext == 'pdf'){
-				return view::load('show/pdf')->with($data);
-			}
-			elseif(in_array($ext,$exts)){
+			if(in_array($ext,$exts)){
 				return view::load('show/'.$n)->with($data);
 			}
 		}
+		
 
 		header('Location: '.$item['downloadUrl']);
 	}
@@ -219,7 +230,7 @@ class IndexController{
 		return $content;
 	}
 
-	//404
+	//时候404
 	function is404(){
 		if(!empty($this->items[$this->name]) || (empty($this->name) && is_array($this->items)) ){
 			return false;

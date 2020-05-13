@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://pan.layne666.cn" target="_blank">OneIndex</a></h1>
+
 
 > Onedrive Directory Index
 

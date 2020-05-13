@@ -4,11 +4,12 @@ class AdminController{
 	static $default_config = array(
 	  'site_name' =>'OneIndex',
 	  'password' => 'oneindex',
-	  'style'=>'material',
+	  'style'=>'nexmoe',
 	  'onedrive_root' =>'',
 	  'cache_type'=>'filecache',
-	  'cache_expire_time' => 3580,
+	  'cache_expire_time' => 3600,
 	  'cache_refresh_time' => 600,
+	  'page_item' => 50,
 	  'root_path' => '',
 	  'show'=> array (
 	  	'stream'=>['txt'],
@@ -53,6 +54,13 @@ class AdminController{
 			}
 
 			config('site_name', $_POST['site_name']);
+			//
+			config('title_name',$_POST['title_name']);
+			config('drawer',$_POST['drawer']);
+			config('main_domain',$_POST['main_domain']);
+			config('proxy_domain',$_POST['proxy_domain']);
+			
+			config('page_item',intval($_POST['page_item']));
 			config('style', $_POST['style']);
 			config('onedrive_root', get_absolute_path($_POST['onedrive_root']));
 			config('onedrive_hide', $_POST['onedrive_hide']);
@@ -60,6 +68,7 @@ class AdminController{
 			config('cache_expire_time', intval($_POST['cache_expire_time']));
 			$_POST['root_path'] = empty($_POST['root_path'])?'?':'';
 			config('root_path', $_POST['root_path']);
+			
 		}
 
 		$config = config('@base');
@@ -180,11 +189,12 @@ class AdminController{
 			config('redirect_uri',$_POST['redirect_uri']);
 			return view::direct('?step=2');
 		}
-	//	if($_SERVER['HTTP_HOST'] == 'localhost'){
+		//if($_SERVER['HTTP_HOST'] == 'localhost'){
 		//	$redirect_uri = 'http://'.$_SERVER['HTTP_HOST'].get_absolute_path(dirname($_SERVER['PHP_SELF']));
-	//	}else{
+		//}else{
 			// 非https,调用ju.tn中转
-			$redirect_uri = 'https://742481030.github.io/onedriverapi.html';
+		//	$redirect_uri = 'https://pan.mxin.ltd/';
+		$redirect_uri = 'https://coding.mxin.ltd/api/onedrive.html';
 	//	}
 		
 		$ru = "https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl={$redirect_uri}&platform=option-php";

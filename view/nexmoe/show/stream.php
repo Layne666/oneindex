@@ -1,5 +1,6 @@
 <?php 
 
+header("ALLOW-CONTROL-ALLOW-ORIGIN:*");
 $types = [
 	'chm'=>'application/octet-stream',
 	'ppt'=>'application/vnd.ms-powerpoint',
@@ -64,6 +65,7 @@ $types = [
 	'rgb'=>"image/x-rgb",
 	'xpm'=>"image/x-xpixmap",
 	'txt'=>"text/plain",
+	'lrc'=>"text/plain",
 	'c'=>"text/plain",
 	'cc'=>"text/plain",
 	'h'=>"text/plain",

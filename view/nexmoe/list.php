@@ -1,14 +1,24 @@
 <?php view::layout('layout')?>
 <?php 
+    function isImage($filename){
+      $types = '/(\.jpg$|\.png$|\.jpeg$)/i';
+      if(preg_match($types, trim($filename))){
+          return true;
+      }else{
+          return false;
+      }
+    }
+  ?>
+<?php 
 function file_ico($item){
   $ext = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
-  if(in_array($ext,['bmp','jpg','jpeg','png','gif'])){
+  if(in_array($ext,['bmp','jpg','jpeg','png','gif','webp'])){
   	return "image";
   }
-  if(in_array($ext,['mp4','mkv','webm','avi','mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'mkv', 'asf'])){
+  if(in_array($ext,['mp4','mkv','webm','avi','mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'mkv', 'asf', 'flv', 'm3u8'])){
   	return "ondemand_video";
   }
-  if(in_array($ext,['ogg','mp3','wav','flac'])){
+  if(in_array($ext,['ogg','mp3','wav','flac','aac','m4a','ape'])){
   	return "audiotrack";
   }
   return "insert_drive_file";
@@ -31,7 +41,7 @@ function file_ico($item){
 	display: none;
 }
 .thumb .mdui-list-item a ,.thumb .mdui-list-item {
-	width:217px;
+	width:213px;
 	height: 230px;
 	float: left;
 	margin: 10px 10px !important;
@@ -46,7 +56,7 @@ function file_ico($item){
 	font-size:100px;
 	display: block;
 	margin-top: 40px;
-	color: #7e7e7e;
+	color: #7ab5ef;
 }
 .thumb .mdui-list-item span{
 	float: left;
@@ -56,11 +66,14 @@ function file_ico($item){
 	position: absolute;
     top: 180px;
 }
+.thumb .forcedownload {
+    display: none; 
 </style>
+
 <div class="nexmoe-item">
 <div class="mdui-row">
 	<ul class="mdui-list">
-		<li class="mdui-list-item th">
+		<li class="mdui-list-item th" style="padding-right:36px;">
 		  <div class="mdui-col-xs-12 mdui-col-sm-7">文件 <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="downward">expand_more</i></div>
 		  <div class="mdui-col-sm-3 mdui-text-right">修改时间 <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i></div>
 		  <div class="mdui-col-sm-2 mdui-text-right">大小 <i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i></div>
@@ -81,7 +94,7 @@ function file_ico($item){
 		<?php foreach((array)$items as $item):?>
 			<?php if(!empty($item['folder'])):?>
 
-		<li class="mdui-list-item mdui-ripple">
+		<li class="mdui-list-item mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>" style="padding-right:36px;">
 			<a href="<?php echo get_absolute_path($root.$path.rawurlencode($item['name']));?>">
 			  <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons">folder_open</i>
@@ -92,36 +105,143 @@ function file_ico($item){
 		  	</a>
 		</li>
 			<?php else:?>
-		<li class="mdui-list-item file mdui-ripple">
-			<a href="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']);?>" target="_blank">
-			  <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+		<li class="mdui-list-item file mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>">
+			<a <?php echo file_ico($item)=="image"?'class="glightbox"':"";echo file_ico($item)=="ondemand_video"?'class="iframe"':"";echo file_ico($item)=="audiotrack"?'class="audio"':"";echo file_ico($item)=="insert_drive_file"?'class="dl"':""?> data-name="<?php e($item['name']);?>" data-readypreview="<?php echo strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));?>" href="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']);?>" target="_blank">
+              <?php if(isImage($item['name']) and $_COOKIE["image_mode"] == "1"):?>
+			  <img class="mdui-img-fluid" src="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']); ?>">
+              <?php else:?>
+              <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons"><?php echo file_ico($item);?></i>
 		    	<span><?php e($item['name']);?></span>
 			  </div>
 			  <div class="mdui-col-sm-3 mdui-text-right"><?php echo date("Y-m-d H:i:s", $item['lastModifiedDateTime']);?></div>
-			  <div class="mdui-col-sm-2 mdui-text-right"><?php echo onedrive::human_filesize($item['size']);?></div>
+			  <div class="mdui-col-sm-2 mdui-text-right"><?php echo onedrive::human_filesize($item['size']);?>
+			  
+			  </div>
+              <?php endif;?>
 		  	</a>
+		  	
+			<div class="forcedownload "  >
+ 			      <a title="直接下载" href="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']);?>">
+			          <button class="mdui-btn mdui-ripple mdui-btn-icon"><i class="mdui-icon material-icons">file_download</i></button>
+			      </a>
+			</div>
+
+
+
 		</li>
 			<?php endif;?>
 		<?php endforeach;?>
+
+		  <?php if($totalpage > 1 ):?>
+		  <li class="mdui-list-item th">
+		    <div class="mdui-col-sm-6 mdui-left mdui-text-left">
+		      <?php if(($page-1) >= 1 ):?>
+		        <a href="<?php echo preg_replace('/\/$/', '', "$root"); ?><?php e($path) ?>.page-<?php e($page-1) ?>/" class="mdui-btn mdui-btn-raised">上一页</a>
+		      <?php endif;?>
+		      <?php if(($page+1) <= $totalpage ):?>
+		        <a href="<?php echo preg_replace('/\/$/', '', "$root"); ?><?php e($path) ?>.page-<?php e($page+1) ?>/" class="mdui-btn mdui-btn-raised">下一页</a>
+		      <?php endif;?>
+		    </div>
+		    <div class="mdui-col-sm-6 mdui-right mdui-text-right">
+		      <div class="mdui-right mdui-text-right"><span class="mdui-chip-title">Page: <?php e($page);?>/<?php e($totalpage);?></span></div>
+		    </div>
+		  </li>
+		  <?php endif;?>
 	</ul>
 </div>
 </div>
 <?php if($readme):?>
-<div class="nexmoe-item">
-	<div class="mdui-typo" style="padding: 20px;">
-		<div class="mdui-chip">
-		  <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
-		  <span class="mdui-chip-title">README.md</span>
-		</div>
-		<?php e($readme);?>
+<div class="mdui-typo mdui-shadow-3" style="padding: 20px;margin: 20px; 0">
+	<div class="mdui-chip">
+	  <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
+	  <span class="mdui-chip-title">README.md</span>
 	</div>
+	<?php e($readme);?>
 </div>
 <?php endif;?>
 </div>
+<script src="//cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
 <script>
+var $$ = mdui.JQ;
+$$(function() {
+    $$('.file .iframe').each(function() {
+        $$(this).on('click', function() {
+            layer.open({
+              type: 2,
+              title: '<a target="_blank" href="'+$$(this).attr('href')+"?s"+'">'+ $$(this).find('span').text()+'(点击新窗口打开)</a>', //如伪静态去除了/?/,需把"&s=1"改为"?s",或者改为以post请求这个链接//jia
+              //shadeClose: true,
+              move: false,
+              shade: false,
+              maxmin: true, 
+              area: ['100%', '100%'],
+              content: $$(this).attr('href')+"?s" //如伪静态去除了/?/,需把"&s=1"改为"?s",或者改为以post请求这个链接//le
+              ,min: function(layero){
+                  //zi;  
+                  layero.css({top: '90%'})
+              }
+            });
+            return false;
+        });
+    });
+	$('.file .dl').each(function () {
+        $(this).on('click', function () {
+            var form = $('<form target=_blank method=post></form>').attr('action', $(this).attr('href')).get(0);
+            $(document.body).append(form);
+            form.submit();
+            $(form).remove();
+            return false;
+        });
+    });
+}); 
+window.TC=window.TC||{};
+jQuery(".file .audio").click(function(e){
+            e.preventDefault();
+            TC.preview_audio(this);
+});
+TC.preview_audio = function(aud){
+    if(!TC.aplayer){
+        TC.aplayerList=[];
+        jQuery(".file .audio").each(function(){
+            var ext = jQuery(this).data("readypreview");
+                var n = jQuery(this).find("span").text();
+                var l = n.replace("."+ext,".lrc");
+                var la = jQuery('a[data-name="'+l+'"]');
+                var lrc = undefined;
+                if(la.length>0){
+                    lrc = la[0].href+"?s";
+                }
+                TC.aplayerList.push({
+                    name:n,
+                    url:this.href,
+                    artist:" ",
+                    lrc:lrc
+                });
+        })
+        jQuery('<div id="aplayer">').appendTo("body");
+        TC.aplayer = new APlayer({
+            container: document.getElementById('aplayer'),
+            fixed: true,
+            audio: TC.aplayerList,
+            lrcType: 3
+        });
+    }
+    var k=-1;
+    for(var i in TC.aplayerList){
+        if(TC.aplayerList[i].name==jQuery(aud).data("name")){
+            k=i;
+            break;
+        }
+    }
+    if(k>=0){
+        TC.aplayer.list.switch(k);
+        TC.aplayer.play();
+        TC.aplayer.setMode("normal");
+    }
+}
+	
 $ = mdui.JQ;
-
 $.fn.extend({
     sortElements: function (comparator, getSortable) {
         getSortable = getSortable || function () { return this; };
@@ -145,7 +265,7 @@ $.fn.extend({
         });
     }
 });
-
+var lightbox = GLightbox();
 function downall() {
      let dl_link_list = Array.from(document.querySelectorAll("li a"))
          .map(x => x.href) // 所有list中的链接
@@ -162,13 +282,13 @@ function downall() {
 }
 
 function thumb(){
-	if($('.mdui-fab i').text() == "apps"){
-		$('.mdui-fab i').text("format_list_bulleted");
+	if($('#thumb i').text() == "apps"){
+		$('#thumb i').text("format_list_bulleted");
 		$('.nexmoe-item').removeClass('thumb');
 		$('.nexmoe-item .mdui-icon').show();
 		$('.nexmoe-item .mdui-list-item').css("background","");
 	}else{
-		$('.mdui-fab i').text("apps");
+		$('#thumb i').text("apps");
 		$('.nexmoe-item').addClass('thumb');
 		$('.mdui-col-xs-12 i.mdui-icon').each(function(){
 			if($(this).text() == "image" || $(this).text() == "ondemand_video"){
@@ -176,7 +296,6 @@ function thumb(){
 				var thumb =(href.indexOf('?') == -1)?'?t=220':'&t=220';
 				$(this).hide();
 				$(this).parent().parent().parent().css("background","url("+href+thumb+")  no-repeat center top");
-				$(this).parent().parent().parent().css("background-size","cover");
 			}
 		});
 	}
@@ -184,15 +303,7 @@ function thumb(){
 }	
 
 $(function(){
-	$('.file a').each(function(){
-		$(this).on('click', function () {
-			var form = $('<form target=_blank method=post></form>').attr('action', $(this).attr('href')).get(0);
-			$(document.body).append(form);
-			form.submit();
-			$(form).remove();
-			return false;
-		});
-	});
+
 
 	$('.icon-sort').on('click', function () {
         let sort_type = $(this).attr("data-sort"), sort_order = $(this).attr("data-order");
@@ -207,7 +318,41 @@ $(function(){
         $(this).attr("data-order", sort_order_to).text("expand_" + sort_order_to);
     });
 
+  	
+  
 });
+  
+var ckname='image_mode';
+function getCookie(name) 
+{
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+        return unescape(arr[2]); 
+    else
+        return null; 
+} 
+function setCookie(key,value,day){
+	var exp = new Date(); 
+	exp.setTime(exp.getTime() - 1); 
+	var cval=getCookie(key); 
+	if(cval!=null) 
+	document.cookie= key + "="+cval+";expires="+exp.toGMTString(); 
+	var date = new Date();
+	var nowDate = date.getDate();
+	date.setDate(nowDate + day);
+	var cookie = key+"="+value+"; expires="+date;
+	document.cookie = cookie;
+	return cookie;
+}
+$('#image_view').on('click', function () {
+	if($(this).prop('checked') == true){
+		setCookie(ckname,1,1);
+		window.location.href=window.location.href;
+	}else{
+		setCookie(ckname,0,1);
+		window.location.href=window.location.href;
+	}
+});
+  
 </script>
-<a href="javascript:thumb();" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">format_list_bulleted</i></a>
 <?php view::end('content');?>

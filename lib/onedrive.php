@@ -3,9 +3,10 @@
 		static $client_id;
 		static $client_secret;
 		static $redirect_uri;
+		static $typeurl;
 		static $api_url = 'https://graph.microsoft.com/v1.0';
 		static $oauth_url = 'https://login.microsoftonline.com/common/oauth2/v2.0';
-static $typeurl;
+
 		//验证URL，浏览器访问、授权
 		static function authorize_url(){
 			$client_id = self::$client_id;
@@ -51,7 +52,8 @@ static $typeurl;
 		//获取 $access_token, 带缓存
 		static function access_token(){
 			$token = config('@token');
-			if($token['expires_on'] > time()+600){
+	//$token = config('@token')["drive"][$_GET["path"]["0"]];
+		if($token['expires_on'] > time()+600){
 				return $token['access_token'];
 			}else{
 				$refresh_token = config('refresh_token');
@@ -70,9 +72,9 @@ static $typeurl;
 		static function request($path="/", $query=""){
 			$path = self::urlencode($path);
 			$path = empty($path)?'/':":/{$path}:/";
-			
 			$token = self::access_token();
 			$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
+		
 			$filess = ROOT . 'config/sharepoint.php';
 	if (file_exists($filess)){
 	    $se=include($filess);
@@ -84,11 +86,8 @@ static $typeurl;
 	}
 
 			$request['url'] =self::$typeurl;
-		//	$request['url'] = self::$api_url."/me/drive/root".$path.$query;
-		
-	//$request['url'] = self::$api_url."/sites/alphaone.sharepoint.cn,a0031d38-3ee4-4e22-87e3-c5ca1825419a,eda2d4bf-9dd2-4703-a606-5ff84bbd1c5b/drive/root".$path.$query;
+	return $request;
 	
-		return $request;
 		}
 
 		
