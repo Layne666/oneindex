@@ -7,6 +7,7 @@
 	  <h1> 修改密码 <small>后台密码修改(与文件夹密码无关)</small></h1>
 	</div>
 	<form action="" method="post">
+		<div class="mdui-typo-subheading mdui-text-color-red"><?php echo $message;?></div>
 		<div class="mdui-textfield">
 		  <h4>旧密码</h4>
 		  <input class="mdui-textfield-input" type="password" name="old_pass" />

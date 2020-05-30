@@ -45,6 +45,9 @@ $script_path = $_SERVER['DOCUMENT_ROOT'].'/one.php';
 					重建所有缓存
 			  </button>
 		  </div>
+		  <br><br><br>
+		  <center class="mdui-typo-headline-opacity mdui-text-color-green"><?php echo $message;?></center>
+		  <br><br><br>
 	  </form>
 	</div>
 
@@ -58,11 +61,6 @@ $script_path = $_SERVER['DOCUMENT_ROOT'].'/one.php';
 	
 </div>
 <script>
-$('button[name=refresh]').on('click',function(){
-	mdui.snackbar({
-		position: 'right-top',
-		message: '正在重建缓存，请耐心等待...'
-	});
-});
+$('button[name=refresh]').on('click',function(){$('center').html('正在重建缓存，请耐心等待...');});
 </script>
 <?php view::end('content');?>

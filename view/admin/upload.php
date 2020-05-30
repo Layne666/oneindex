@@ -7,6 +7,9 @@
 	</div>
 
 	<div class="mdui-row">
+	  <div class="mdui-typo">
+		  <p><mark><?php echo $message;?></mark></p>
+	  </div>
 	  <form action="" method="post">
 		  <div class="mdui-col-xs-7">
 			<div class="mdui-textfield">

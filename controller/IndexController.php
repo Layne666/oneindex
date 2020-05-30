@@ -11,7 +11,22 @@ class IndexController{
  		$this->z_page = config('page_item');
        
 		//获取路径和文件名
-		$paths = explode('/', rawurldecode($_GET['path']));
+				/////////
+		$var=explode("/",$_SERVER["REQUEST_URI"]);
+$驱动器=$var["1"];
+array_splice($var,0, 1);
+unset($var['0']);
+
+ $请求路径 = implode("/", $var);  
+ 
+$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
+
+		
+		
+
+		$paths = explode('/', rawurldecode($请求路径));
+	//	$paths = explode('/', rawurldecode($_GET['path']));
+		
 		if(substr($_SERVER['REQUEST_URI'], -1) != '/'){
 			$this->name = array_pop($paths);
 		}
@@ -81,7 +96,21 @@ class IndexController{
 	//文件
 	function file(){
 		$item = $this->items[$this->name];
-		if ($item['folder']) {//是文件夹
+		if ($item['folder']) {//是文件
+		
+		
+
+		
+		
+		////////
+		
+		
+		
+		
+		
+		
+		
+		
 			$url = $_SERVER['REQUEST_URI'].'/';
 		}elseif(!is_null($_GET['t']) ){//缩略图
 			$url = $this->thumbnail($item);

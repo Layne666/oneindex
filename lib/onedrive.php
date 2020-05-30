@@ -6,7 +6,8 @@
 		static $typeurl;
 		static $api_url = 'https://graph.microsoft.com/v1.0';
 		static $oauth_url = 'https://login.microsoftonline.com/common/oauth2/v2.0';
-
+		static $drivestype;
+static $access_token;
 		//验证URL，浏览器访问、授权
 		static function authorize_url(){
 			$client_id = self::$client_id;
@@ -46,14 +47,15 @@
 			$request['headers']= "Content-Type: application/x-www-form-urlencoded";
 			$resp = fetch::post($request);
 			$data = json_decode($resp->content, true);
+		
+			
 			return $data;
 		}
 
-		//获取 $access_token, 带缓存
+		/*
 		static function access_token(){
 			$token = config('@token');
-	//$token = config('@token')["drive"][$_GET["path"]["0"]];
-		if($token['expires_on'] > time()+600){
+			if($token['expires_on'] > time()+600){
 				return $token['access_token'];
 			}else{
 				$refresh_token = config('refresh_token');
@@ -66,28 +68,52 @@
 			}
 			return "";
 		}
+		*/
+
+
+
+static function access_token(){
+    $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+ $驱动器=$varrr["1"];
+    
+			$配置文件 = config('@'.$驱动器);
+			if($配置文件['expires_on'] > time()+600){
+				return $token['access_token'];
+			}else{
+				$refresh_token = config('refresh_token@'.$驱动器);
+				$token = self::get_token($refresh_token);
+				if(!empty($token['refresh_token'])){
+					$配置文件['expires_on'] = time()+ $token['expires_in'];
+					$配置文=$token;
+					
+					config('@'.$驱动器, $配置文件);
+					return $token['access_token'];
+				}
+			}
+			return "";
+		}
+
+
+
+
+
+
+
 
 
 		// 生成一个request，带token
 		static function request($path="/", $query=""){
 			$path = self::urlencode($path);
 			$path = empty($path)?'/':":/{$path}:/";
-			$token = self::access_token();
+		$token=self::$access_token;
 			$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
-		
-			$filess = ROOT . 'config/sharepoint.php';
-	if (file_exists($filess)){
-	    $se=include($filess);
-	    onedrive::$typeurl=$se["0"];
-	   
-	    
-	}else{
-	       onedrive::$typeurl="https://microsoftgraph.chinacloudapi.cn/v1.0/me/drive/root".$path.$query;;
-	}
-
-			$request['url'] =self::$typeurl;
-	return $request;
 	
+	
+	
+		$request['url']=self::$typeurl.$path.$query;
+		
+			return $request;
+			
 		}
 
 		
@@ -101,8 +127,7 @@
 			if(is_array($hide_list) && count($hide_list)>0){
 				foreach($hide_list as $hide_dir){
 					foreach($items as $key=>$_array){
-						$buf = trim($hide_dir);
-						if($buf && stristr($key, $buf))unset($items[$key]);
+						if(!empty(trim($hide_dir)) && stristr($key,trim($hide_dir)))unset($items[$key]);
 					}
 				}
 			}
@@ -153,15 +178,6 @@
 			$data = json_decode($resp->content, true);
 			$request = self::request($path,"thumbnails/0?select={$size}");
 			return @$data[$size]['url'];
-		}
-
-		static function share($path){
-			$request = self::request($path,"createLink");
-			$post_data['type'] = 'view';
-			$post_data['scope'] = 'anonymous';
-			$resp = fetch::post($request, json_encode($post_data));
-			$data = json_decode($resp->content, true);
-			return $data;
 		}
 
 		//文件上传函数

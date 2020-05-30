@@ -1,5 +1,28 @@
 <?php view::layout('layout')?>
 <?php 
+if ($_SERVER["REQUEST_URI"]=="/")
+{
+   header("location:/default");
+}
+////
+/////////
+$var=explode("/",$_SERVER["REQUEST_URI"]);
+$驱动器=$var["1"];
+array_splice($var,0, 1);
+unset($var['0']);
+
+ $请求路径 = implode("/", $var);  
+ 
+$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
+ $url=$请求路径;
+
+
+//////////
+
+
+
+
+
     function isImage($filename){
       $types = '/(\.jpg$|\.png$|\.jpeg$)/i';
       if(preg_match($types, trim($filename))){
@@ -80,7 +103,12 @@ function file_ico($item){
 		</li>
 		<?php if($path != '/'):?>
 		<li class="mdui-list-item mdui-ripple">
-			<a href="<?php echo get_absolute_path($root.$path.'../');?>">
+			<a href="<?php echo "/". $驱动器."/". $url.'../';?>">
+			    
+			    
+			    
+			    
+			    
 			  <div class="mdui-col-xs-12 mdui-col-sm-7">
 				<i class="mdui-icon material-icons">arrow_upward</i>
 		    	..
@@ -95,7 +123,9 @@ function file_ico($item){
 			<?php if(!empty($item['folder'])):?>
 
 		<li class="mdui-list-item mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>" style="padding-right:36px;">
-			<a href="<?php echo get_absolute_path($root.$path.rawurlencode($item['name']));?>">
+		    
+		    
+		<a href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name']);?>">
 			  <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons">folder_open</i>
 		    	<span><?php e($item['name']);?></span>
@@ -106,9 +136,9 @@ function file_ico($item){
 		</li>
 			<?php else:?>
 		<li class="mdui-list-item file mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>">
-			<a <?php echo file_ico($item)=="image"?'class="glightbox"':"";echo file_ico($item)=="ondemand_video"?'class="iframe"':"";echo file_ico($item)=="audiotrack"?'class="audio"':"";echo file_ico($item)=="insert_drive_file"?'class="dl"':""?> data-name="<?php e($item['name']);?>" data-readypreview="<?php echo strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));?>" href="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']);?>" target="_blank">
+			<a <?php echo file_ico($item)=="image"?'class="glightbox"':"";echo file_ico($item)=="ondemand_video"?'class="iframe"':"";echo file_ico($item)=="audiotrack"?'class="audio"':"";echo file_ico($item)=="insert_drive_file"?'class="dl"':""?> data-name="<?php e($item['name']);?>" data-readypreview="<?php echo strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));?>" href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name']);?>" target="_blank">
               <?php if(isImage($item['name']) and $_COOKIE["image_mode"] == "1"):?>
-			  <img class="mdui-img-fluid" src="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']); ?>">
+			  <img class="mdui-img-fluid" src="<?php echo"/". $驱动器."/". $url.rawurlencode($item['name']);?>">
               <?php else:?>
               <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons"><?php echo file_ico($item);?></i>
@@ -122,7 +152,7 @@ function file_ico($item){
 		  	</a>
 		  	
 			<div class="forcedownload "  >
- 			      <a title="直接下载" href="<?php echo get_absolute_path($root.$path).rawurlencode($item['name']);?>">
+ 			      <a title="直接下载" href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name']);?>">
 			          <button class="mdui-btn mdui-ripple mdui-btn-icon"><i class="mdui-icon material-icons">file_download</i></button>
 			      </a>
 			</div>

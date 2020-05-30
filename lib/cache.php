@@ -2,8 +2,8 @@
 
 	!defined('CACHE_PATH') && define('CACHE_PATH', sys_get_temp_dir().'/');
 	class cache{
-		// 驱动方式（支持filecache/memcache/secache）
-		static $type = 'secache';
+		// 驱动方式（支持filecache/memcache/secache/redis）
+		static $type = 'filecache';
 
 		// 返回缓存实例
     	protected static function c(){
@@ -67,30 +67,4 @@
 			self::del($key);
 			return $value;
 		}
-		
-		 static function refresh_cache($path, $next=true){
-            $path2 = onedrive::urlencode($path);
-            set_time_limit(0);
-            if( php_sapi_name() == "cli" ){
-                echo $path2.PHP_EOL;
-            }
-            $items = onedrive::dir($path2);
-            if(is_array($items)){
-                self::set('dir_'.$path2, $items, config('cache_expire_time') );
-            }
-            if($next){
-                foreach((array)$items as $item){
-                    if($item['folder']){
-                        self::refresh_cache($path.$item['name'].'/');
-                    }
-                }
-            }
-        }
-
-        static function clear_opcache(){
-            // 清除php文件缓存
-            if (function_exists('opcache_reset')) {
-                opcache_reset();
-            }
-        }
 	}
