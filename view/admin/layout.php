@@ -57,10 +57,13 @@
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88d;</i>
       <div class="mdui-list-item-content">密码修改</div>
     </a>
-
-    <a href="https://onedrive.live.com/" class="mdui-list-item" target="_blank">
+<a href="/admin/file" class="mdui-list-item" target="_blank">
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2bf;</i>
-      <div class="mdui-list-item-content">登陆微软</div>
+      <div class="mdui-list-item-content">文件管理国际版vue</div>
+    </a>
+    <a href="https://login.partner.microsoftonline.cn/" class="mdui-list-item" target="_blank">
+      <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2bf;</i>
+      <div class="mdui-list-item-content">世纪互联</div>
     </a>
   </div>
 </div>

@@ -6,15 +6,6 @@ date_default_timezone_set('PRC');
 define('TIME', time());
 !defined('ROOT') && define('ROOT', str_replace("\\", "/", dirname(__FILE__)) . '/');
 
-
-
-
-
-
-
-
-
-
 //__autoload方法
 function i_autoload($className) {
 	if (is_int(strripos($className, '..'))) {
@@ -76,12 +67,22 @@ if (!function_exists('config')) {
 		}
 	}
 }
-
+///////////////////////////////////////////
 function access_token($配置文件,$驱动器){
-  
-
+ 
   $token = $配置文件;
-  
+  ///////////////未配置////////////////
+ 
+if ($_SERVER["REQUEST_URI"]=="/?/admin/"){
+   
+    return ;
+}
+ 
+if ($_SERVER["REQUEST_URI"]=="/?/login"){
+   
+    return ;
+}
+ 
  
  ///////////////////未授权////////////////
   if($token ["refresh_token"]=="")//未授权
@@ -130,11 +131,12 @@ function access_token($配置文件,$驱动器){
    if(!empty($response["refresh_token"])){
    config("refresh_token@".$驱动器,$response["refresh_token"]);
    config("access_token@".$驱动器,$response["access_token"]);
-   echo "授权成功" ;
+ 
    
    $地址=str_replace("?code=".$code,"",$_SERVER["REQUEST_URI"]);
    
    echo '<a href="'.$地址.'">授权成功</a>';
+  exit;
    
    }else{echo "授权失败";}
    
@@ -159,9 +161,8 @@ function access_token($配置文件,$驱动器){
         $_SERVER["REQUEST_URI"]="/default";
         }
         $redirect_uri=urlencode("http://" .$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
-        $授权地址= $oauthurl."/authorize?client_id=".$client_id."&scope=offline_access+files.readwrite.all&response_type=code&redirect_uri=https://coding.mxin.ltd&state=".$redirect_uri;
+        $授权地址= $oauthurl."/authorize?client_id=".$client_id."&scope=offline_access+files.readwrite.all+Sites.ReadWrite.All&response_type=code&redirect_uri=https://coding.mxin.ltd&state=".$redirect_uri;
         echo '<a href="'.$授权地址.'">授权应用</a>';
-
 
 
 
@@ -186,6 +187,7 @@ if($token ["refresh_token"]!=="")//已经授权
     if($token['expires_on'] > time()+600){
       
         return $token['access_token'];
+       
     }else{
         $refresh_token = $token['refresh_token'];
         $newtoken =get_token($配置文件);
@@ -196,11 +198,11 @@ if($token ["refresh_token"]!=="")//已经授权
         
                 config('@'.$驱动器, $配置文件);
             
-            
+          require(ROOT."del.php");
               return $token['access_token'];
               }else{
 
-            echo "获取accesstoken失败";exit;
+            echo "获取accesstoken失败";
               }
 
 
@@ -217,15 +219,6 @@ if($token ["refresh_token"]!=="")//已经授权
 
 
 
-
-
-
-
-
-
-
-
-
 function get_token($配置文件=array()){
 		 $oauth_url=$配置文件["oauth_url"];
 		 $client_id=$配置文件["client_id"];
@@ -235,18 +228,23 @@ function get_token($配置文件=array()){
 
 		 	$request['url'] = $oauth_url."/token";
  	 	$request['post_data']  = "client_id={$client_id}&redirect_uri={$redirect_uri}&client_secret={$client_secret}&refresh_token={$refresh_token}&grant_type=refresh_token";
- 	  "<br>";
+ 	  
 			$request['headers']= "Content-Type: application/x-www-form-urlencoded";
 			$resp = fetch::post($request);
-			($resp);
-			$data = json_decode($resp->content, true);
-var_dump($data);
+	if($resp->http_code=="200"){
+	   	$data = json_decode($resp->content, true);
+
 			return $data;
+	}
+	else{
+	    //echo $resp->http_code."错误";exit;
+	}
+		
 		}
     
 
 
-
+//////////////////////////////////////
 
 
 

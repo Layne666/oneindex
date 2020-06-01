@@ -1,5 +1,5 @@
 ## 预览地址  
-[od.xkx.me](https://od.xkx.me/)
+[pan.mxin.ltd](https://pan.mxin.ltd/)
 
 ## V佬的项目基础上更新
 
@@ -14,10 +14,6 @@
 可通过Nginx/CDN反代sharepoint.com，加快速度。
 
 5.增加Aplayer获取当前页所有音频列表播放。
-
-6.增加PDF.js预览pdf文件。
-
-7.世纪互联安装方法：把index.php开头的第6和7行的斜杠删除即可。
 
 
 
@@ -119,9 +115,17 @@ bash /etc/init.d/fcgiwrap-php restart
 
 ## 重新安装
 删除 oneindex/config 下的所有文件即可.                
-一键安装的地址: /var/www/oneindex/config                
+              
 
 ## change log:  
+20-06-01: 修复首页空白问题
+20-05-29: 增加sharepoint站点id自动获取工具,账户显示,空间显示.
+20-05-24: 移除cli模式
+20-05-25: 完成自动配置
+20-05-24: 完成多盘配置
+20-05-21: 添加防盗链接
+20-05-20: 移除pdfjs
+20-05-19: 静态资源cdn 使用jsdevil
 18-03-29: 更新直链获取机制、缓存机制，避免频繁访问的token失效  
 18-03-29: 解决非英文编码问题  
 18-03-29: 添加onedrive共享的起始目录 功能  

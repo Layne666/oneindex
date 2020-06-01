@@ -73,7 +73,7 @@ if($_GET["filename"])
 'drivestype' => 'cn',
   'client_secret' => 'v4[Nq:4=rmFS78BwYi[@x3sGk-iY.U:S',
   'client_id' => '3447f073-eef3-4c60-bb68-113a86f2c39a',
-  'redirect_uri' => $_GET["redirect_uri"],
+  'redirect_uri' => 'https://coding.mxin.ltd/' ,
   'api' => 'https://microsoftgraph.chinacloudapi.cn/v1.0/me/drive/root',
   'api_url' => 'https://microsoftgraph.chinacloudapi.cn/v1.0',
   'oauth_url' => 'https://login.partner.microsoftonline.cn/common/oauth2/v2.0',
@@ -86,7 +86,7 @@ if($_GET["filename"])
 'drivestype' => 'us',
   'client_secret' => '~ZkpvnVoMysK36v0_Og1EPp.l3JA_NY-9a',
   'client_id' => '02be423f-f28c-48de-b265-09327e1a04eb',
-  'redirect_uri' => $_GET["redirect_uri"],
+ 'redirect_uri' => 'https://coding.mxin.ltd/' ,
   'api' => 'https://graph.microsoft.com/v1.0/v1.0/me/drive/root',
   'api_url' => 'https://graph.microsoft.com/v1.0',
   'oauth_url' => 'https://login.microsoftonline.com/common/oauth2/v2.0',
@@ -103,15 +103,17 @@ if($_GET["filename"])
     
     
     
+    if(!file_exists(ROOT."config/default.php"))
+    {
+      $_GET["filename"]="default";  
+    }
     
     
-    
-     
+   
      config("@".$_GET["filename"],$data);
     
      echo "配置成功点此授权";
-    
-    
+echo "<a href=\"".$_GET["filename"]."/\" >配置成功点此授权</a>";
     
     
     exit;
@@ -224,11 +226,6 @@ if($_GET["filename"])
     世纪互联
   </label>
 
-    
-  
- <input type="hidden" name="oauth_url" value="https://login.partner.microsoftonline.cn/common/oauth2/v2.0"/>
- <input type="hidden" name="api_url" value="https://microsoftgraph.chinacloudapi.cn/v1.0"/>
- <input type="hidden" name="api" value="https://microsoftgraph.chinacloudapi.cn/v1.0/me/drive/root"/>
  
   
   
@@ -243,11 +240,10 @@ if($_GET["filename"])
 		
 			<i class="mdui-icon material-icons">https</i>
 			
-			<label class="mdui-textfield-label">配置文件名称首次安装配置文件名称请保持default</label>
-			<input type="text" type="text" class="mdui-textfield-input" name="filename" required value="default"/>
+			<label class="mdui-textfield-label">配置文件名称</label>
+		
+  	<input type="text" type="text" class="mdui-textfield-input" name="filename" required value=""/>
 			<div class="mdui-textfield-error"></div>
-		</div>
-  
   
   
 		<div class="mdui-textfield mdui-textfield-floating-label mdui-textfield-has-bottom mdui-textfield-not-empty">
@@ -255,12 +251,7 @@ if($_GET["filename"])
 		
 		
 		
-	<div class="mdui-textfield mdui-textfield-floating-label mdui-textfield-has-bottom mdui-textfield-not-empty">
-		   <i class="mdui-icon material-icons">&#xe41a;</i>
-		   <label class="mdui-textfield-label mdui-textfield-has-bottom mdui-textfield-not-empty">回调地址</label>
-		   <input type="txet" class="mdui-textfield-input" name="redirect_uri" value="https://coding.mxin.ltd/api/onedrive.html"/>
-		   <div class="mdui-textfield-error">重定向URL不能为空</div>
-		</div>
+
 	 <a class="mdui-btn mdui-btn-raised mdui-float-left" href="?step=0">上一步</a>
 	 <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit">下一步</button>
 	</form>

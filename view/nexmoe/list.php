@@ -15,7 +15,11 @@ unset($var['0']);
  
 $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
  $url=$请求路径;
-
+ if ($_GET["page"]==""){
+   $_GET["page"]=1;  
+ }
+$next=$_GET["page"]+1;
+$uppage=$_GET["page"]-1;
 
 //////////
 
@@ -125,7 +129,7 @@ function file_ico($item){
 		<li class="mdui-list-item mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>" style="padding-right:36px;">
 		    
 		    
-		<a href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name']);?>">
+		<a href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name'])."/";?>">
 			  <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons">folder_open</i>
 		    	<span><?php e($item['name']);?></span>
@@ -167,10 +171,10 @@ function file_ico($item){
 		  <li class="mdui-list-item th">
 		    <div class="mdui-col-sm-6 mdui-left mdui-text-left">
 		      <?php if(($page-1) >= 1 ):?>
-		        <a href="<?php echo preg_replace('/\/$/', '', "$root"); ?><?php e($path) ?>.page-<?php e($page-1) ?>/" class="mdui-btn mdui-btn-raised">上一页</a>
+		        <a href="  <?php echo "/".$驱动器."/".$请求路径."?page=".$uppage; ?>/" class="mdui-btn mdui-btn-raised">上一页</a>
 		      <?php endif;?>
 		      <?php if(($page+1) <= $totalpage ):?>
-		        <a href="<?php echo preg_replace('/\/$/', '', "$root"); ?><?php e($path) ?>.page-<?php e($page+1) ?>/" class="mdui-btn mdui-btn-raised">下一页</a>
+		        <a href="<?php echo "/".$驱动器."/".$请求路径."?page=".$next ?>/" class="mdui-btn mdui-btn-raised  mdui-right">下一页</a>
 		      <?php endif;?>
 		    </div>
 		    <div class="mdui-col-sm-6 mdui-right mdui-text-right">

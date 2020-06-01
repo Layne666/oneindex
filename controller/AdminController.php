@@ -36,7 +36,7 @@ class AdminController
     public function login()
     {
         if (!empty($_POST['password']) && $_POST['password'] == config('password')) {
-            setcookie('admin', md5(config('password').config('refresh_token')));
+            setcookie('admin',config('password'));
 
             return view::direct(get_absolute_path(dirname($_SERVER['SCRIPT_NAME'])).'?/admin/');
         }
@@ -78,14 +78,7 @@ class AdminController
 
     public function cache()
     {
-        if (!is_null($_POST['clear'])) {
-            cache::clear();
-            $message = '清除缓存成功';
-        } elseif (!is_null($_POST['refresh'])) {
-            oneindex::refresh_cache(get_absolute_path(config('onedrive_root')));
-            $message = '重建缓存成功';
-        }
-
+        require(ROOT."del.php");
         return view::load('cache')->with('message', $message);
     }
 

@@ -7,26 +7,24 @@ class IndexController{
 	private $time;
 
 	function __construct(){
- 		//分页页数
- 		$this->z_page = config('page_item');
+	    global $配置文件;
+ 	
+       	//分页页数
+ 		$this->z_page = 100;
        
-		//获取路径和文件名
-				/////////
 		$var=explode("/",$_SERVER["REQUEST_URI"]);
-$驱动器=$var["1"];
-array_splice($var,0, 1);
-unset($var['0']);
-
- $请求路径 = implode("/", $var);  
- 
-$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
+        $驱动器=$var["1"];
+        array_splice($var,0, 1);
+        unset($var['0']);
+          $请求路径 = implode("/", $var);  
+         $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
 
 		
 		
 
-		$paths = explode('/', rawurldecode($请求路径));
-	//	$paths = explode('/', rawurldecode($_GET['path']));
-		
+	 	$paths = explode('/', rawurldecode($请求路径));
+	 	
+	 
 		if(substr($_SERVER['REQUEST_URI'], -1) != '/'){
 			$this->name = array_pop($paths);
 		}
@@ -36,25 +34,45 @@ $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
  			$this->page = 1;
  		} else {
  			$this->page = $mat[1][0];
+ 		
  		}
-         
+         $this->page=$_GET["page"]??"1";
  		$this->url_path = preg_replace("(\.page\-[0-9]*/$)","",get_absolute_path(join('/', $paths)));
 
-		$this->path = get_absolute_path(config('onedrive_root').$this->url_path);
+	$this->path = get_absolute_path(config('onedrive_root').$this->url_path);
 		//获取文件夹下所有元素
 		$this->items = $this->items($this->path);
 	}
 
 	
 	function index(){
+	   
+	 
+	    
+	  
+	    
+	    if ($this->path=="/"){
+	          if($this->items==NUll){
+	          echo "数据空";
+	          require(ROOT."del.php");
+	          header("refresh: 0.1");
+	          
+	      }
+	        
+	    }
+	    
+	    
+	    
+	    
+	    
 		//是否404
 		$this->is404();
 
 		$this->is_password();
 
-		header("Expires:-1");
-		header("Cache-Control:no_cache");
-		header("Pragma:no-cache");
+		//header("Expires:-1");
+	//	header("Cache-Control:no_cache");
+	//	header("Pragma:no-cache");
 
 		if(!empty($this->name)){//file
 			return $this->file();
@@ -97,16 +115,6 @@ $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
 	function file(){
 		$item = $this->items[$this->name];
 		if ($item['folder']) {//是文件
-		
-		
-
-		
-		
-		////////
-		
-		
-		
-		
 		
 		
 		
