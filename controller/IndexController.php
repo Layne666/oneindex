@@ -53,9 +53,9 @@ class IndexController{
 	    
 	    if ($this->path=="/"){
 	          if($this->items==NUll){
-	          echo "数据空";
+	         // echo "数据空";
 	          require(ROOT."del.php");
-	          header("refresh: 0.1");
+	        //  header("refresh: 0.1");
 	          
 	      }
 	        

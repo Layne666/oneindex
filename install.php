@@ -1,10 +1,8 @@
 <?php
 require __DIR__.'/init.php';
 
-
-
-if (($_COOKIE['admin'] !== md5(config('password').config('refresh_token')))) {
-    if(!file_exists("ROOT".'config/base.php')){
+////////////////////////////////系统初始化///////////
+    if(!file_exists(ROOT."config/base.php")){
         
         $default_config = array(
       'site_name' => 'OneIndex',
@@ -33,6 +31,18 @@ if (($_COOKIE['admin'] !== md5(config('password').config('refresh_token')))) {
     );
     
     config("@base",$default_config);
+        setcookie("admin","oneindex");
+        header("refresh: 2"); 
+        echo "初始化成功";
+    }
+        
+        
+        
+        ///////////////// 权限认证/////////////
+        
+        
+        if($_COOKIE["admin"] !==config("password@base"))
+        {die("未授权");}
         
         
         
@@ -47,19 +57,6 @@ if (($_COOKIE['admin'] !== md5(config('password').config('refresh_token')))) {
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    }else{
-  die("不是管理员");}
-}
-
 
 
 
@@ -87,7 +84,7 @@ if($_GET["filename"])
   'client_secret' => '~ZkpvnVoMysK36v0_Og1EPp.l3JA_NY-9a',
   'client_id' => '02be423f-f28c-48de-b265-09327e1a04eb',
  'redirect_uri' => 'https://coding.mxin.ltd/' ,
-  'api' => 'https://graph.microsoft.com/v1.0/v1.0/me/drive/root',
+  'api' => 'https://graph.microsoft.com/v1.0/me/drive/root',
   'api_url' => 'https://graph.microsoft.com/v1.0',
   'oauth_url' => 'https://login.microsoftonline.com/common/oauth2/v2.0',
             

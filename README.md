@@ -1,20 +1,6 @@
 ## 预览地址  
 [pan.mxin.ltd](https://pan.mxin.ltd/)
-
-## V佬的项目基础上更新
-
-1.内嵌播放
-
-2.侧边栏功能
-
-3.增加glightbox插件，支持图片响应式弹出，滑动查看。
-如希望视频也才用此插件，请修改view/nexmoe/list.php第107行视频对应的class="iframe"改为class="glightbox"
-
-4.增加反代sharepoint.com功能（由ppx[ppxwo.com]修改）
-可通过Nginx/CDN反代sharepoint.com，加快速度。
-
-5.增加Aplayer获取当前页所有音频列表播放。
-
+必须设置伪静态
 
 
 其他说明
@@ -97,14 +83,6 @@ OneDrive Directory Index
 直接列onedrive目录，文件直链下载。  
 
 
-## 添加 Redis 支持（Debian 8）：
-```
-# 安装 redis 支持
-apt-get install -y redis-server php5-redis
-# 重启 fcgiwrap-php 进程
-bash /etc/init.d/fcgiwrap-php restart
-# 后台选择 redis 模式, 并更新缓存.
-```
 
 ## 创意整合
 1.极大简化安装步骤。           
@@ -118,6 +96,7 @@ bash /etc/init.d/fcgiwrap-php restart
               
 
 ## change log:  
+20*06-02: 添加侧边栏网盘导航
 20-06-01: 修复首页空白问题
 20-05-29: 增加sharepoint站点id自动获取工具,账户显示,空间显示.
 20-05-24: 移除cli模式

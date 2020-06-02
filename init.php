@@ -71,6 +71,7 @@ if (!function_exists('config')) {
 function access_token($配置文件,$驱动器){
  
   $token = $配置文件;
+ 
   ///////////////未配置////////////////
  
 if ($_SERVER["REQUEST_URI"]=="/?/admin/"){
@@ -83,10 +84,71 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
     return ;
 }
  
+ //////////////////////
  
+ if ($_GET["site"])
+ {
+     echo "查找站点";
+     echo $_GET["site"];
+    
+    $token['access_token'];
+     
+     $request['headers'] = "Authorization: bearer {$配置文件['access_token']}".PHP_EOL.'Content-Type: application/json'.PHP_EOL;
+        $request['url'] = 'https://microsoftgraph.chinacloudapi.cn/v1.0/sites/root';
+        $resp = fetch::get($request);
+        $data = json_decode($resp->content, true);
+        $hostname = $data['siteCollection']['hostname'];
+
+        $getsiteid = $配置文件["api_url"].'/sites/'.$hostname.':'.$_REQUEST['site'];
+        $request['url'] = $getsiteid;
+        $respp = fetch::get($request);
+        $datass = json_decode($respp->content, true);
+
+   $siteidurl=  $datass["id"];
+     if ($siteidurl==""){
+         echo   "获取失败重写获取";
+       echo '<form action="/'.$驱动器.'/ "  method="get">
+ 　　<input type="text" name="site" value ="/sites/名称" />
+ 　　<input type="submit" value="站点id" />
+ </form>';
+         exit;
+     }
+     echo $api=$配置文件["api_url"].'/sites/'.$siteidurl.'/drive/root';
+     
+     config("api@".$驱动器,$api);
+     
+     echo "配置sharepoint成功";
+     
+      echo '<a href="/'.$驱动器.'">授权成功</a>';
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     exit;
+ }
  ///////////////////未授权////////////////
   if($token ["refresh_token"]=="")//未授权
 {
+    
+    
+ 
+    
+    
+    
+    
+    
+    
+    
+    
     if($_GET["code"])//通过code获取授权
     {  $code= $_GET["code"];
         $驱动器=str_replace("?code=".$code,"",$驱动器);
@@ -136,6 +198,35 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
    $地址=str_replace("?code=".$code,"",$_SERVER["REQUEST_URI"]);
    
    echo '<a href="'.$地址.'">授权成功</a>';
+   
+   
+   
+   /////////////////////
+ echo   "是否启用Sharepoint";
+       echo '<form action="/'.$驱动器.'/ "  method="get">
+ 　　<input type="text" name="site" value ="/sites/名称" />
+ 　　<input type="submit" value="站点id" />
+ </form>';
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
   exit;
    
    }else{echo "授权失败";}
@@ -150,9 +241,31 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
 
     }else //生成授权地址
     {
+  
+if ($_SERVER["REQUEST_URI"]=="/admin?/logout" 
+|$_SERVER["REQUEST_URI"]=="/admin" 
+|$_SERVER["REQUEST_URI"]=="/?/admin" 
+|$_SERVER["REQUEST_URI"]=="/?/login" 
+| $_SERVER["REQUEST_URI"]=="/admin?/logout"
+| $_SERVER["REQUEST_URI"]=="/?/admin/setpass" 
+| $_SERVER["REQUEST_URI"]=="/?/admin/show"
+| $_SERVER["REQUEST_URI"]=="/?/admin/upload"
+| $_SERVER["REQUEST_URI"]=="/?/admin/cache"
+| $_SERVER["REQUEST_URI"]=="/?/admin/sharepoint"
+| $_SERVER["REQUEST_URI"]=="/?/admin/images"
+| $_SERVER["REQUEST_URI"]=="/admin/file"
+){
+   
+    return ;
+}
 
+  
 
-
+if($配置文件["oauth_url"]==""){
+  	http_response_code(404);
+		view::load('404')->show();
+		die();
+};
 
 
         $oauthurl=$配置文件["oauth_url"];
@@ -167,7 +280,7 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
 
 
 
-
+exit;
 
 
 
@@ -290,50 +403,6 @@ function get_absolute_path($path) {
 
 !defined('CONTROLLER_PATH') && define('CONTROLLER_PATH', ROOT.'controller/');
 
-
-
-
-
-
-$varrr=explode("/",$_SERVER["REQUEST_URI"]);
- $驱动器=$varrr["1"] ;
- if ($驱动器==""){
-     $驱动器="default";
- }
- 
-array_splice($varrr,0, 1);
-unset($varrr['0']);
-
- $请求路径 = implode("/", $varrr);  
- 
-$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
- $url=$请求路径;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-//加载配置文件
- $drivesfile = ROOT.'config/'.$驱动器.'.php';
-if (file_exists($drivesfile)) {
-    $配置文件 = include $drivesfile;
-} else {
-    if (!file_exists(ROOT.'config/default.php')) {
-  //header('Location: install.php');
-
-    
-    }
- 
-}
-
- 
-
-define('CACHE_PATH', ROOT.'cache/'.$驱动器."");
-cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
-////////////////////////////////////初始化配置文件start//////////////////////////////////////
-
-define('CACHE_PATH', ROOT.'cache/'.$驱动器."");
-cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
 
 
 

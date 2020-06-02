@@ -3,12 +3,51 @@ require __DIR__.'/init.php';
 
 
 
-  if (!file_exists(ROOT.'config/base.php')) {
-  header('Location: /install.php');
-  
+$varrr=explode("/",$_SERVER["REQUEST_URI"]);
+ $驱动器=$varrr["1"] ;
+ if ($驱动器==""){
+     $驱动器="default";
+ }
+ 
+array_splice($varrr,0, 1);
+unset($varrr['0']);
+
+ $请求路径 = implode("/", $varrr);  
+ 
+$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
+ $url=$请求路径;
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+
+//加载配置文件
+ $drivesfile = ROOT.'config/'.$驱动器.'.php';
+ 
+if (file_exists($drivesfile)) {
+    $配置文件 = include $drivesfile;
+    
 }
+    if (!file_exists(ROOT.'config/base.php') or !file_exists(ROOT.'config/default.php') ) {
+      header('Location: /install.php');
+
+  
+    exit;
+    }
+ 
+
+
+ 
+
+define('CACHE_PATH', ROOT.'cache/'.$驱动器."");
+cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
+////////////////////////////////////初始化配置文件start//////////////////////////////////////
+
+define('CACHE_PATH', ROOT.'cache/'.$驱动器."");
+cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
+
+
+
  
 
 
@@ -70,6 +109,15 @@ if (($_COOKIE['admin'] == md5(config('password').config('refresh_token')) || $im
 /*
  *    列目录
  */
+ 
+ echo'
+ <script language=javascript>
+<!--
+var startTime,endTime;
+var d=new Date();
+startTime=d.getTime();
+//-->
+</script>';
 route::any('{path:#all}', 'IndexController@index');
 
 
@@ -79,37 +127,22 @@ route::any('{path:#all}', 'IndexController@index');
 
 $etime=microtime(true);//获取程序执行结束的时间
 $total=$etime-$stime;   //计算差值
-echo "<br />当前页面执行时间为：{$total} 秒";
+echo "<div style=text-align:center>执行时间为：{$total} 秒";
+
 $req["headers"]="Authorization: bearer {$配置文件["access_token"]}".PHP_EOL."Content-Type: application/json".PHP_EOL;;
-$req["url"]=$配置文件["api_url"]."/me/drive/";
+$req["url"]=$配置文件["api"];
+$req["url"]=str_replace("root","",$req["url"]);
 $ss=fetch::get($req);
 	$data = json_decode($ss->content, true);
 //	var_dump($data);
 echo "账户". $data["owner"]["user"]["email"];
 echo"已用空间". onedrive::human_filesize($data["quota"]["used"]);
 echo"总空间". onedrive::human_filesize($data["quota"]["total"]);
-echo"回收站". onedrive::human_filesize($data["quota"]["deleted"]);
-//echo $data["owner"]["user"]["id"];
-//var_dump($data);
-$ret['headers'] = "Authorization: bearer ".$配置文件["access_token"].PHP_EOL.'Content-Type: application/json'.PHP_EOL;
-     $ret['url'] = 'https://microsoftgraph.chinacloudapi.cn/v1.0/sites/root';
-     $resp = fetch::get($ret);
-     $datare = json_decode($resp->content, true);
-    
-     $hostname = $datare['siteCollection']['hostname'];
+echo"回收站". onedrive::human_filesize($data["quota"]["deleted"]).'网页执行时间';
+echo '<script language=javascript>d=new Date();endTime=d.getTime
+();document.write((endTime-startTime)/1000);</script>秒';
+
+echo "</div>";
 
 
-       echo   $getsiteid = $配置文件["api_url"].'/sites/'.$hostname.':'."/sites/jane";
-       
-         $ret['url'] = $getsiteid;
-         $respp = fetch::get($ret);
-     $datass = json_decode($respp->content, true);
 
-  $siteidurl = ($datass['id']);
-  $bb = 
- $apiurl."/sites/".$siteidurl."/drive/";
- 
- 
- 
- echo "下面复制到cloudreve 存储策略 server";
- echo $bb;exit;

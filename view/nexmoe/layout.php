@@ -123,10 +123,61 @@ $驱动器=$var["1"];
    		 </div>
 	</div>   
 	<div class="mdui-list" mdui-collapse="{accordion: true}">
+	    
+	    
 		<a href="/" class="mdui-list-item mdui-ripple">
 			<i class="mdui-list-item-icon mdui-icon material-icons">home</i>
 			<div class="mdui-list-item-content">首页</div>
 		</a>
+		
+		
+		
+		<?php 
+		
+		
+$filess = scandir(ROOT."config/");
+//显示
+
+count($filess);
+unset($filess[0]);
+unset($filess[1]);
+unset($filess[2]);
+$meme=$filess;
+foreach ($meme as $v)
+{
+    
+    $v=str_replace(".php","",$v);
+    
+    echo '
+    <a href="/'.$v.'" class="mdui-list-item mdui-ripple">
+			<i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+			<div class="mdui-list-item-content">'.$v.'</div>
+		</a>
+    ';
+    
+
+
+}
+	
+	if($_COOKIE["admin"]==config("password@base"))	
+	echo'
+	  
+		<a href="/install.php" class="mdui-list-item mdui-ripple">
+			<i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+			<div class="mdui-list-item-content">添加新盘</div>
+		</a>
+	
+	';
+		
+		
+		?>
+		
+		
+		
+		
+		
+		
+		
     		<?php e(config('drawer'));?>
 	</div>
 </div>

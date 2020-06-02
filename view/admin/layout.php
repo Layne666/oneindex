@@ -57,7 +57,7 @@
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88d;</i>
       <div class="mdui-list-item-content">密码修改</div>
     </a>
-<a href="/admin/file" class="mdui-list-item" target="_blank">
+<a href="https://file.mxin.ltd/" class="mdui-list-item" target="_blank">
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2bf;</i>
       <div class="mdui-list-item-content">文件管理国际版vue</div>
     </a>
