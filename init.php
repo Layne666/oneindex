@@ -407,7 +407,22 @@ function get_absolute_path($path) {
 
 
 
-
+function splitlast($str, $split)
+{
+    $len = strlen($split);
+    $pos = strrpos($str, $split);
+    if ($pos===false) {
+        $tmp[0] = $str;
+        $tmp[1] = '';
+    } elseif ($pos>0) {
+        $tmp[0] = substr($str, 0, $pos);
+        $tmp[1] = substr($str, $pos+$len);
+    } else {
+        $tmp[0] = '';
+        $tmp[1] = substr($str, $len);
+    }
+    return $tmp;
+}
 
 
 
