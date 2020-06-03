@@ -45,7 +45,7 @@ OneDrive Directory Index
               
 
 ## change log:  
-
+20-06-03: 修复文件上传总是首页bug
 20-06-03: 文件/文件夹上传
 
 20-06-02: 添加侧边栏网盘导航
