@@ -76,7 +76,7 @@ if ($_GET["action"]=="upbigfile")
     
     
     
-    $path=$请求路径.$filename;
+     $path=$请求路径.$filename;
     	$path = onedrive::urlencode($path);
 			$path = empty($path)?'/':":/{$path}:/";
 	$token=$配置文件["access_token"];
@@ -261,7 +261,7 @@ echo "</div>";
 
             td2.innerHTML='获取上传链接 ...';
             var xhr1 = new XMLHttpRequest();
-            xhr1.open("GET", '/<?php echo $驱动器 ?>/?action=upbigfile&upbigfilename='+ upbigfilename +'&filesize='+ file.size +'&lastModified='+ file.lastModified);
+            xhr1.open("GET", '/<?php echo $驱动器."/".$请求路径 ?>?action=upbigfile&upbigfilename='+ upbigfilename +'&filesize='+ file.size +'&lastModified='+ file.lastModified);
             xhr1.setRequestHeader('x-requested-with','XMLHttpRequest');
             xhr1.send(null);
             xhr1.onload = function(e){
