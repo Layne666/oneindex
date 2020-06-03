@@ -18,59 +18,7 @@ rewrite ^/(.*)$ /index.php?/$1 last;
 }
 ```
 重要:如设置了伪静态去除/?/,需把view/nexmoe/list.php的173和179行的"&s=1"改为"?s"(或者改为以post方式请求这个链接，我不会改啊)
-               
-2.后台侧边栏代码示例(可放自定义的css/js)
-```
-    <div class="mdui-collapse-item">
-        <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
-            <i class="mdui-list-item-icon mdui-icon material-icons">folder</i>
-            <div class="mdui-list-item-content">Test</div>
-            <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
-        </div>
-        <div class="mdui-collapse-item-body mdui-list">
-            <a href="/?/456" class="mdui-list-item mdui-ripple ">456</a>
-        </div>
-	<div class="mdui-collapse-item-body mdui-list">
-            <a href="/?/345" class="mdui-list-item mdui-ripple ">345</a>
-        </div>      
-    </div>
 
-    <a href="/?/234" class="mdui-list-item mdui-ripple">
-        <i class="mdui-list-item-icon mdui-icon material-icons">folder</i>
-        <div class="mdui-list-item-content">234</div>
-    </a>
-    
-    <a href="#" class="mdui-list-item mdui-ripple">
-        <i class="mdui-list-item-icon mdui-icon material-icons">message</i>
-        <div class="mdui-list-item-content">Telegram频道</div>
-    </a>
-    
-    <span class="mdui-list-item mdui-ripple" id="example-bottom">
-        <i class="mdui-list-item-icon mdui-icon material-icons">attach_money</i>
-        <div class="mdui-list-item-content">打赏</div>
-    </span>
-    
-    <a href="#" class="mdui-list-item mdui-ripple">
-        <i class="mdui-list-item-icon mdui-icon material-icons">bubble_chart</i>
-        <div class="mdui-list-item-content">Blog</div>
-    </a>
-    
-    <a href="#" class="mdui-list-item mdui-ripple">
-        <i class="mdui-list-item-icon mdui-icon material-icons">info_outline</i>
-       <div class="mdui-list-item-content">关于</div>
-    </a>
-
-<script>
-var $$ = mdui.JQ;
-$$('#example-bottom').on('click', function () {
-  mdui.snackbar({
-    message: '<img src="/qr.png"/>',
-    position: 'top'
-  });
-});
-</script>
-
-```
 
 ----------------------------------------------------------------------------------------------
 
@@ -81,6 +29,7 @@ OneDrive Directory Index
 不用服务器空间，不走服务器流量，  
 
 直接列onedrive目录，文件直链下载。  
+文件上传
 
 
 
@@ -97,9 +46,9 @@ OneDrive Directory Index
 
 ## change log:  
 
-20*06-03: 文件/文件夹上传
+20-06-03: 文件/文件夹上传
 
-20*06-02: 添加侧边栏网盘导航
+20-06-02: 添加侧边栏网盘导航
 
 20-06-01: 修复首页空白问题
 
