@@ -3,6 +3,8 @@ define('VIEW_PATH', ROOT.'view/admin/');
 class UploadController{
 
 	function index(){
+
+	
 		if($_POST['upload'] == 1){
 			$local = realpath($_POST['local']);
 			$remotepath = get_absolute_path($_POST['remote']);
@@ -98,7 +100,7 @@ class UploadController{
 	}
 
 	private function task_request($remotepath=''){
-		$request['headers'] = "Cookie: admin=".md5(config('password').config('refresh_token')).PHP_EOL;
+		$request['headers'] = "Cookie: admin=".config('password').PHP_EOL;
 		$request['headers'] .= "Host: ".$_SERVER['HTTP_HOST'];
 		$request['curl_opt']=[CURLOPT_CONNECTTIMEOUT => 1,CURLOPT_TIMEOUT=>1,CURLOPT_FOLLOWLOCATION=>true];
 		$http_type = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
@@ -186,7 +188,7 @@ class UploadController{
 		}
 		$request= $this->task_request($task['remotepath']);
 		$resp = fetch::post($request);
-		//var_dump($resp);
+		var_dump($resp);
 	}
 
 	

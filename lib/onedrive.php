@@ -4,10 +4,11 @@
 		static $client_secret;
 		static $redirect_uri;
 		static $typeurl;
-		static $api_url = 'https://graph.microsoft.com/v1.0';
-		static $oauth_url = 'https://login.microsoftonline.com/common/oauth2/v2.0';
+		static $oauth_url;
 		static $drivestype;
-static $access_token;
+		static $api;
+		static $api_url;
+		static  $access_token;
 		//验证URL，浏览器访问、授权
 		static function authorize_url(){
 			$client_id = self::$client_id;
@@ -52,31 +53,13 @@ static $access_token;
 			return $data;
 		}
 
-		/*
-		static function access_token(){
-			$token = config('@token');
-			if($token['expires_on'] > time()+600){
-				return $token['access_token'];
-			}else{
-				$refresh_token = config('refresh_token');
-				$token = self::get_token($refresh_token);
-				if(!empty($token['refresh_token'])){
-					$token['expires_on'] = time()+ $token['expires_in'];
-					config('@token', $token);
-					return $token['access_token'];
-				}
-			}
-			return "";
-		}
-		*/
+	
 
 
-
-static function access_token(){
-    $varrr=explode("/",$_SERVER["REQUEST_URI"]);
- $驱动器=$varrr["1"];
-    
-			$配置文件 = config('@'.$驱动器);
+        static function access_token(){
+            $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+            $驱动器=$varrr["1"];
+            $配置文件 = config('@'.$驱动器);
 			if($配置文件['expires_on'] > time()+600){
 				return $token['access_token'];
 			}else{
@@ -105,12 +88,9 @@ static function access_token(){
 		static function request($path="/", $query=""){
 			$path = self::urlencode($path);
 			$path = empty($path)?'/':":/{$path}:/";
-		$token=self::$access_token;
+	    	$token=self::$access_token;
 			$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
-	
-	
-	
-		$request['url']=self::$typeurl.$path.$query;
+              $request['url']=self::$typeurl.$path.$query;
 		
 			return $request;
 			
@@ -119,7 +99,7 @@ static function access_token(){
 		
 		//返回目录信息
 		static function dir($path="/"){
-			$request = self::request($path, "children?select=name,size,folder,@microsoft.graph.downloadUrl,lastModifiedDateTime");
+			$request = self::request($path, "children?select=name,size,folder,@microsoft.graph.downloadUrl,lastModifiedDateTime,id");
 			$items = array();
 			self::dir_next_page($request, $items);
 			//不在列表显示的文件夹
@@ -148,6 +128,7 @@ static function access_token(){
 				//var_dump($item);
 				$items[$item['name']] = array(
 					'name'=>$item['name'],
+					'id'=>$item['id'],
 					'size'=>$item['size'],
 					'lastModifiedDateTime'=>strtotime($item['lastModifiedDateTime']),
 					'downloadUrl'=>$item['@microsoft.graph.downloadUrl'],
@@ -163,14 +144,342 @@ static function access_token(){
 		}
 
 		
-		//static function content($path){
-		//	$token = self::access_token();
-		//	fetch::$headers = "Authorization: bearer {$token}";
-		//	$url = self::$api_url."/me/drive/root:".self::urlencode($path).":/content";
-		//	$resp = fetch::get($url);
-		//	return $resp->content;
-		//}
+		
+		
+		static function rename($itemid,$name){
+		     $access_token=self::$access_token;
+		 $api=str_replace("root","items/".$itemid,self::$typeurl) ;
+		 
+		 
+		 $curl = curl_init();
 
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $api,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "PATCH",
+        CURLOPT_POSTFIELDS =>"{\n  \"name\": \"".$name."\"\n}",
+        CURLOPT_HTTPHEADER => array(
+         "Authorization: Bearer ".$access_token,
+         "Content-Type: application/json"
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+var_dump($response) ;
+
+	
+		    
+		}
+		
+		
+		
+		
+        static function delete($itemid=array()){
+       
+            $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+		    $驱动器=$varrr["1"] ;array_splice($varrr,0, 1);unset($varrr['0']); 
+            $请求路径 = implode("/", $varrr);
+            $请求路径= self::urlencode(str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径)); 
+            $path = empty($请求路径)?'/':":/{$请求路径}:/";
+            $配置文件=require(ROOT."config/".$驱动器.".php");
+           
+          $access_token=$配置文件["access_token"];
+		     $apie=str_replace("root","items/",$配置文件["api"]) ;
+		   
+		  $apis=array();
+
+         for($i=0; $i<count($itemid); $i++)
+         {
+          $apis[$i]=$apie.$itemid[$i];
+           }
+
+$result=$res=$ch=array();
+$nch = 0;
+$mh = curl_multi_init();
+  foreach ($apis as $nk => $url) {
+ 
+    $timeout=20;
+    $ch[$nch] = curl_init();
+    curl_setopt_array($ch[$nch], array(
+    CURLOPT_URL => $url,
+    CURLOPT_TIMEOUT => $timeout,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "DELETE",
+    CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer ". $access_token,
+    "Content-Type: application/json"
+  ),
+    
+    ));
+ 
+    curl_multi_add_handle($mh, $ch[$nch]);
+    ++$nch;
+ 
+  }
+ 
+  /* wait for performing request */
+ 
+  do {
+    $mrc = curl_multi_exec($mh, $running);
+  } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+ 
+  while ($running && $mrc == CURLM_OK) {
+    // wait for network
+    if (curl_multi_select($mh, 0.5) > -1) {
+      // pull in new data;
+      do {
+        $mrc = curl_multi_exec($mh, $running);
+      } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+    }
+ 
+  }
+ 
+  if ($mrc != CURLM_OK) {
+    error_log("CURL Data Error");
+  }
+ 
+  /* get data */
+ 
+  $nch = 0;
+ 
+  foreach ($apis as $moudle=>$node) {
+    if (($err = curl_error($ch[$nch])) == '') {
+      $res[$nch]=curl_multi_getcontent($ch[$nch]);
+      $result[$moudle]=$res[$nch];
+    }else{
+      error_log("curl error");
+ 
+    }
+ 
+    curl_multi_remove_handle($mh,$ch[$nch]);
+    curl_close($ch[$nch]);
+    ++$nch;
+  }
+ 
+  curl_multi_close($mh);
+  echo "批量处理完成";
+ 
+    
+		}
+		
+		
+		
+
+
+        static function pathtoid($access_token,$path){	
+			$request=self::request(urldecode($path));
+            $request['headers'] = "Authorization: bearer {$access_token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
+            $resp=	fetch::get($request);
+            $data = json_decode($resp->content, true);
+            return $data["id"];
+   
+        }
+        static function movepast($itemid,$newitemid){
+    
+        $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+		    $驱动器=$varrr["1"] ;array_splice($varrr,0, 1);unset($varrr['0']); 
+	
+		$配置文件=require(ROOT."config/".$驱动器.".php");
+        onedrive::$typeurl=$配置文件["api"] ;
+        onedrive::$access_token=access_token($配置文件,$驱动器);
+        $api=str_replace("root","items/".$itemid,self::$typeurl) ;
+        $access_token=self::$access_token;
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $api,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "PATCH",
+        CURLOPT_POSTFIELDS =>"{\n  \"parentReference\": {\n    \"id\": \"".$newitemid."\"\n  }\n  \n}",
+        CURLOPT_HTTPHEADER => array(
+         "Authorization: Bearer ".onedrive::$access_token,
+        "Content-Type: application/json" ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+        echo $id."完成";
+   
+    
+        }
+
+
+
+
+
+
+
+
+
+
+
+static function 批量移动($itemid=array(),$newitemid){
+ 
+ 
+    $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+    $驱动器=$varrr["1"] ;array_splice($varrr,0, 1);unset($varrr['0']); 
+    $配置文件=require(ROOT."config/".$驱动器.".php");
+    $token=$配置文件["access_token"];
+     echo  $typeurl=$配置文件["api"] ;
+    var_dump($itemid);
+    $apis=array();
+    $api=str_replace("root","items/",$typeurl);
+    for($i=0; $i<count($itemid); $i++)
+    {
+     $apis[$i]=$api.$itemid[$i];
+        
+        
+    }
+   
+   
+  //  $api=str_replace("root","items/".$itemid,$typeurl) ;
+$result=$res=$ch=array();
+$nch = 0;
+$mh = curl_multi_init();
+  foreach ($apis as $nk => $url) {
+ 
+    $timeout=20;
+    $ch[$nch] = curl_init();
+    curl_setopt_array($ch[$nch], array(
+    CURLOPT_URL => $url,
+    CURLOPT_TIMEOUT => $timeout,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+     CURLOPT_CUSTOMREQUEST => "PATCH",
+    CURLOPT_POSTFIELDS =>"{\n  \"parentReference\": {\n    \"id\": \"".$newitemid."\"\n  }\n  \n}",
+    CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer ".$token,
+    "Content-Type: application/json"
+  ),
+    
+    ));
+ 
+    curl_multi_add_handle($mh, $ch[$nch]);
+    ++$nch;
+ 
+  }
+ 
+  /* wait for performing request */
+ 
+  do {
+    $mrc = curl_multi_exec($mh, $running);
+  } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+ 
+  while ($running && $mrc == CURLM_OK) {
+    // wait for network
+    if (curl_multi_select($mh, 0.5) > -1) {
+      // pull in new data;
+      do {
+        $mrc = curl_multi_exec($mh, $running);
+      } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+    }
+ 
+  }
+ 
+  if ($mrc != CURLM_OK) {
+    error_log("CURL Data Error");
+  }
+ 
+  /* get data */
+ 
+  $nch = 0;
+ 
+  foreach ($apis as $moudle=>$node) {
+    if (($err = curl_error($ch[$nch])) == '') {
+      $res[$nch]=curl_multi_getcontent($ch[$nch]);
+      $result[$moudle]=$res[$nch];
+    }else{
+      error_log("curl error");
+ 
+    }
+ 
+    curl_multi_remove_handle($mh,$ch[$nch]);
+    curl_close($ch[$nch]);
+    ++$nch;
+  }
+ 
+  curl_multi_close($mh);
+  echo "批量处理完成";
+ var_dump($result) ;
+ 
+}
+
+
+
+
+
+static function get_siteidbyname($sitename,$access_token,$api_url){
+    
+    
+     $request['headers'] = "Authorization: bearer {$access_token}".PHP_EOL.'Content-Type: application/json'.PHP_EOL;
+    $request['url'] = $api_url.'/sites/root';
+    $resp = fetch::get($request);
+    $data = json_decode($resp->content, true);
+    $hostname = $data['siteCollection']['hostname'];
+    $getsiteid = $api_url.'/sites/'.$hostname.':'.$_REQUEST['site'];
+    $request['url'] = $getsiteid;
+    $respp = fetch::get($request);
+    $datass = json_decode($respp->content, true);
+   return $siteidurl=  $datass["id"];
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
+static function create_folder($path,$name="新建文件夹"){
+     	$path = self::urlencode($path);
+   	$path = empty($path)?'/':":/{$path}:/";
+	    	$api=self::$typeurl.$path."/children";
+       	$curl = curl_init();
+                curl_setopt_array($curl, array(
+          CURLOPT_URL => $api,
+             CURLOPT_RETURNTRANSFER => true,
+                 CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS =>"{\n  \"name\": \"".$name."\",\n  \"folder\": { },\n  \"@microsoft.graph.conflictBehavior\": \"rename\"\n}",
+  CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer ".self::$access_token."",
+    "Content-Type: application/json"
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+echo $response;
+
+        }
 		//文件缩略图链接
 		static function thumbnail($path,$size='large'){
 			$request = self::request($path,"thumbnails/0?select={$size}");
@@ -180,7 +489,7 @@ static function access_token(){
 			return @$data[$size]['url'];
 		}
 
-		//文件上传函数
+		//简单文件上传函数
 		static function upload($path,$content){
 			$request = self::request($path,"content");
 			$request['post_data'] = $content;

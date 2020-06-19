@@ -3,29 +3,114 @@ if( php_sapi_name() !== "cli" ){
    die( "NoAccess" );
 }
 require 'init.php';
+
+
 ini_set('memory_limit', '128M');
 
+
 class one{
+    static  function cac(){
+        echo CACHE_PATH;
+    }
 	static function cache_clear(){
 		cache::clear();
 	}
 
-	static function cache_refresh(){
-		oneindex::refresh_cache(get_absolute_path(config('onedrive_root')));
+	static function cache_refresh($drives="default"){
+	    echo "缓存更新";
+echo  $drivesfile = ROOT.'config/'.$drives.'.php';
+ 
+if (file_exists($drivesfile)) {
+    $配置文件 = include $drivesfile;
+
+
+  
+    
+    }
+	    
+define('CACHE_PATH', ROOT.'cache/'.$drives."/");
+
+echo cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
+ echo onedrive::$client_id =  $配置文件["client_id"];
+ echo onedrive::$client_secret =$配置文件["client_secret"];
+ echo onedrive::$redirect_uri = $配置文件["redirect_uri"];
+ echo onedrive::$api_url = $配置文件["api_url"];
+ echo onedrive::$oauth_url = $配置文件["oauth_url"];
+ echo onedrive::$access_token=access_token($配置文件,$drives);
+ 
+	    onedrive::$typeurl=$配置文件["api"];
+	    
+	    
+	    
+	    
+	    	    	    
+	//oneindex::refresh_cache(get_absolute_path(config('onedrive_root')));
+		cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+	
+        // 清除php文件缓存
+        cache::clear_opcache();
 	}
 
-	static function token_refresh(){
-		$refresh_token = config('refresh_token');
+	static function token_refresh($drives="default"){
+	    	    
+$drivesfile = ROOT.'config/'.$drives.'.php';
+ 
+
+     $配置文件 = include $drivesfile;
+    if( $配置文件==""){exit;}
+
+
+
+
+
+onedrive::$client_id =  $配置文件["client_id"];
+onedrive::$client_secret =$配置文件["client_secret"];
+onedrive::$redirect_uri = $配置文件["redirect_uri"];
+onedrive::$api_url = $配置文件["api_url"];
+onedrive::$oauth_url = $配置文件["oauth_url"];
+ 
+  
+		$refresh_token = $配置文件['refresh_token'];
 		$token = onedrive::get_token($refresh_token);
-		if(!empty($token['refresh_token'])){
-			config('@token', $token);
-		}
+		
+$配置文件["access_token"]=$token["access_token"];
+	$配置文件['expires_on'] = time()+ $token['expires_in'];
+		config("@".$drives,$配置文件 );
+		echo" 刷新成功";
+	
 	}
 
-	static function upload_file($localfile, $remotefile=null){
+	static function upload_file($localfile, $remotefile=null,$drives="default"){
+	    
+	    
+$drivesfile = ROOT.'config/'.$drives.'.php';
+ 
+
+    $配置文件 = include $drivesfile;
+    
+
+
+
+
+
+onedrive::$client_id =  $配置文件["client_id"];
+onedrive::$client_secret =$配置文件["client_secret"];
+onedrive::$redirect_uri = $配置文件["redirect_uri"];
+onedrive::$api_url = $配置文件["api_url"];
+onedrive::$oauth_url = $配置文件["oauth_url"];
+ 	onedrive::$access_token=access_token($配置文件,$驱动器);
+onedrive::$typeurl=$配置文件["api"] ;
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 		$localfile = realpath($localfile);
 		if(!file_exists($localfile)){
-			exit('file not exists');
+			print ' 本地文件不存在';
 		}
 		print ' 本地文件：'.$localfile.PHP_EOL;
 
@@ -40,9 +125,10 @@ class one{
 		print ' 远程文件：'.$remotepath.PHP_EOL;
 		
 		$filesize = onedrive::_filesize($localfile) OR die('无法获取文件大小');
-		if($filesize < 10485760){
+		if($filesize < 10){
 			print ' 上传方式：直接上传'.PHP_EOL;
 			$begin_time = microtime(true);
+			
 			$result = onedrive::upload($remotepath, file_get_contents($localfile));
 			if(!empty($result)){
 				$upload_time = microtime(true) - $begin_time;
@@ -108,6 +194,7 @@ class one{
 
 
 	static function upload_large_file($localfile, $remotepath){
+	    	print ' 创建上传会话'.PHP_EOL;
 		fetch::init([CURLOPT_TIMEOUT=>200]);
 		$upload = config('@upload');
 		$info = $upload[$remotepath];
@@ -178,6 +265,49 @@ class one{
 		
 	}
 
+
+
+
+
+static function ls ($path="/",$drives="default"){
+    
+       
+$drivesfile = ROOT.'config/'.$drives.'.php';
+ 
+
+    $配置文件 = include $drivesfile;
+    
+
+
+
+
+
+onedrive::$client_id =  $配置文件["client_id"];
+onedrive::$client_secret =$配置文件["client_secret"];
+onedrive::$redirect_uri = $配置文件["redirect_uri"];
+onedrive::$api_url = $配置文件["api_url"];
+onedrive::$oauth_url = $配置文件["oauth_url"];
+ 	onedrive::$access_token=access_token($配置文件,$驱动器);
+onedrive::$typeurl=$配置文件["api"] ;
+	    
+	    
+	    
+	    
+    print "列目录";
+    
+  $item=onedrive::dir($path);
+  foreach ($item as $item)
+    {
+        
+        echo $path."/".$item["name"].$item["id"]."\n";
+    }
+    
+    
+    
+    
+    
+    
+}
 	
 }
 
@@ -192,10 +322,10 @@ if(is_callable(['one',$action])){
 ?>
 oneindex commands :
  cache
-  cache:clear    	clear cache
-  cache:refresh  	refresh cache
+    cache:clear    	clear cache
+    cache:refresh  	refresh cache
  token
-  token:refresh  	refresh token
- upload
-  upload:file  		upload a file to onedrive
-  upload:folder  	upload a folder to onedrive
+token:refresh  	    参数说明 php one.php  token:refresh 驱动器名称(default)
+upload文件上传      非默认盘时候不能省列远程路径
+upload:file     	参数说明 php one.php upload:file 本地文件 远程路径 驱动器名称(default)
+upload:folder  	    参数说明 php one.php upload:folder  本地文件 远程路径 驱动器名称(default)

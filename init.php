@@ -1,11 +1,11 @@
 <?php
+global $stime;
 $stime=microtime(true); 
-
 error_reporting(E_ALL & ~E_NOTICE);
 date_default_timezone_set('PRC');
 define('TIME', time());
 !defined('ROOT') && define('ROOT', str_replace("\\", "/", dirname(__FILE__)) . '/');
-
+require_once(ROOT.'vendor/autoload.php') ;
 //__autoload方法
 function i_autoload($className) {
 	if (is_int(strripos($className, '..'))) {
@@ -68,102 +68,57 @@ if (!function_exists('config')) {
 	}
 }
 ///////////////////////////////////////////
+if(!function_exists("access_token")){
+    
+    
 function access_token($配置文件,$驱动器){
  
-  $token = $配置文件;
+    $token = $配置文件;
+  
  
-  ///////////////未配置////////////////
- 
-if ($_SERVER["REQUEST_URI"]=="/?/admin/"){
-   
-    return ;
-}
- 
-if ($_SERVER["REQUEST_URI"]=="/?/login"){
-   
-    return ;
-}
- 
- //////////////////////
- 
- if ($_GET["site"])
- {
-     echo "查找站点";
-     echo $_GET["site"];
-    
-    $token['access_token'];
-     
-     $request['headers'] = "Authorization: bearer {$配置文件['access_token']}".PHP_EOL.'Content-Type: application/json'.PHP_EOL;
-        $request['url'] = 'https://microsoftgraph.chinacloudapi.cn/v1.0/sites/root';
-        $resp = fetch::get($request);
-        $data = json_decode($resp->content, true);
-        $hostname = $data['siteCollection']['hostname'];
+    ///////////////////已经授权////////////////
+    if($token ["refresh_token"]!=="")//已经授权
+    {
+            if($token['expires_on'] > time()+600){
+               return $token['access_token'];
+             }else
+            {
+            $refresh_token = $token['refresh_token'];
+            $newtoken =get_token($配置文件);
 
-        $getsiteid = $配置文件["api_url"].'/sites/'.$hostname.':'.$_REQUEST['site'];
-        $request['url'] = $getsiteid;
-        $respp = fetch::get($request);
-        $datass = json_decode($respp->content, true);
+                 if(!empty($newtoken['refresh_token']))
+                {
+                    $配置文件["expires_on"] = time()+ $newtoken['expires_in'];
+            	    $配置文件["access_token"]=$newtoken["access_token"];
+                    config('@'.$驱动器, $配置文件);
+                   return $token['access_token'];
+                }
+            }
 
-   $siteidurl=  $datass["id"];
-     if ($siteidurl==""){
-         echo   "获取失败重写获取";
-       echo '<form action="/'.$驱动器.'/ "  method="get">
- 　　<input type="text" name="site" value ="/sites/名称" />
- 　　<input type="submit" value="站点id" />
- </form>';
-         exit;
-     }
-     echo $api=$配置文件["api_url"].'/sites/'.$siteidurl.'/drive/root';
-     
-     config("api@".$驱动器,$api);
-     
-     echo "配置sharepoint成功";
-     
-      echo '<a href="/'.$驱动器.'">授权成功</a>';
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     exit;
- }
- ///////////////////未授权////////////////
-  if($token ["refresh_token"]=="")//未授权
-{
-    
-    
- 
+
+
+
+
+        
+    }
     
     
     
-    
-    
-    
-    
-    
-    if($_GET["code"])//通过code获取授权
-    {  $code= $_GET["code"];
+
+   ///////////////////未授权////////////////
+    if($token ["refresh_token"]=="")//未授权
+    {
+  
+    if($_GET["code"]){ 
+        $code= $_GET["code"];
         $驱动器=str_replace("?code=".$code,"",$驱动器);
-       $配置文件=config("@".$驱动器);
-    
-             $client_id = $配置文件["client_id"];
-            $client_secret = $配置文件["client_secret"];
-            $redirect_uri = $配置文件["redirect_uri"];
-   
-            $授权url =  $配置文件["oauth_url"]."/token";
-   
-   
-             $curl = curl_init();
-   
-             curl_setopt_array($curl, array(
+        $配置文件=config("@".$驱动器);
+        $client_id = $配置文件["client_id"];
+        $client_secret = $配置文件["client_secret"];
+        $redirect_uri = $配置文件["redirect_uri"];
+        $授权url =  $配置文件["oauth_url"]."/token";
+        $curl = curl_init();
+         curl_setopt_array($curl, array(
               CURLOPT_URL => $授权url ,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -179,10 +134,7 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
             "code: ".$_GET["code"],
             "redirect_uri: https://coding.mxin.ltd",
             "Content-Type: application/x-www-form-urlencoded",
-            "grant_type: authorization_code",
-   
-   
-   ),
+            "grant_type: authorization_code", ),
    ));
    
    $response = curl_exec($curl);
@@ -197,75 +149,32 @@ if ($_SERVER["REQUEST_URI"]=="/?/login"){
    
    $地址=str_replace("?code=".$code,"",$_SERVER["REQUEST_URI"]);
    
-   echo '<a href="'.$地址.'">授权成功</a>';
-   
-   
-   
-   /////////////////////
- echo   "是否启用Sharepoint";
-       echo '<form action="/'.$驱动器.'/ "  method="get">
+    echo '<a href="'.$地址.'">授权成功</a>';
+    echo   "是否启用Sharepoint";
+    echo '<form action="/'.$驱动器.'/ "  method="get">
  　　<input type="text" name="site" value ="/sites/名称" />
  　　<input type="submit" value="站点id" />
- </form>';
+     </form>';
    
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+   	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+	
+        // 清除php文件缓存
+        cache::clear_opcache();
+ 
    
   exit;
    
    }else{echo "授权失败";}
    
-   
-   
-   
-
-
-
-
-
     }else //生成授权地址
     {
   
-if ($_SERVER["REQUEST_URI"]=="/admin?/logout" 
-|$_SERVER["REQUEST_URI"]=="/admin" 
-|$_SERVER["REQUEST_URI"]=="/?/admin" 
-|$_SERVER["REQUEST_URI"]=="/?/login" 
-| $_SERVER["REQUEST_URI"]=="/admin?/logout"
-| $_SERVER["REQUEST_URI"]=="/?/admin/setpass" 
-| $_SERVER["REQUEST_URI"]=="/?/admin/show"
-| $_SERVER["REQUEST_URI"]=="/?/admin/upload"
-| $_SERVER["REQUEST_URI"]=="/?/admin/cache"
-| $_SERVER["REQUEST_URI"]=="/?/admin/sharepoint"
-| $_SERVER["REQUEST_URI"]=="/?/admin/images"
-| $_SERVER["REQUEST_URI"]=="/admin/file"
-){
-   
-    return ;
-}
 
   
 
-if($配置文件["oauth_url"]==""){
-  	http_response_code(404);
-		view::load('404')->show();
-		die();
-};
+if($配置文件["oauth_url"]==""){return;
+  	
+}else{
 
 
         $oauthurl=$配置文件["oauth_url"];
@@ -276,9 +185,12 @@ if($配置文件["oauth_url"]==""){
         $redirect_uri=urlencode("http://" .$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
         $授权地址= $oauthurl."/authorize?client_id=".$client_id."&scope=offline_access+files.readwrite.all+Sites.ReadWrite.All&response_type=code&redirect_uri=https://coding.mxin.ltd&state=".$redirect_uri;
         echo '<a href="'.$授权地址.'">授权应用</a>';
+	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+	
+        // 清除php文件缓存
+        cache::clear_opcache();
 
-
-
+}
 
 exit;
 
@@ -293,45 +205,50 @@ exit;
 
 
 }
+ 
 
- ///////////////////已经授权////////////////
-if($token ["refresh_token"]!=="")//已经授权
-{
-    if($token['expires_on'] > time()+600){
-      
-        return $token['access_token'];
-       
-    }else{
-        $refresh_token = $token['refresh_token'];
-        $newtoken =get_token($配置文件);
+   
+  if($_GET["site"])
+    {
+     
+    $siteidurl=onedrive::get_siteidbyname($sitename,$配置文件["access_token"],$配置文件["api_url"]);
+   
+     if ($siteidurl==""){
+    echo   "获取失败重新获取";
+      echo '<form action="/'.$驱动器.'/ "  method="get">
+ 　　<input type="text" name="site" value ="/sites/名称" />
+ 　　<input type="submit" value="站点id" />
+ </form>';
+         exit;
+     }
+     echo $api=$配置文件["api_url"].'/sites/'.$siteidurl.'/drive/root';
+     
+        config("api@".$驱动器,$api);
+        echo "配置sharepoint成功<br>";
+        echo '<a href="/'.$驱动器.'">授权成功</a>';
+    	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+        cache::clear_opcache();
+     
+     exit;
+ }
 
-             if(!empty($newtoken['refresh_token'])){
-                 $配置文件["expires_on"] = time()+ $newtoken['expires_in'];
-            	$配置文件["access_token"]=$newtoken["access_token"];
-        
-                config('@'.$驱动器, $配置文件);
-            
-          require(ROOT."del.php");
-              return $token['access_token'];
-              }else{
-
-            echo "获取accesstoken失败";
-              }
-
-
-
+    return $token['access_token'];
+  
+  
+  //endsub
     }
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
 
 }
 
-}
 
-
-
+ if (!function_exists("get_token")){
 function get_token($配置文件=array()){
 		 $oauth_url=$配置文件["oauth_url"];
 		 $client_id=$配置文件["client_id"];
@@ -340,7 +257,7 @@ function get_token($配置文件=array()){
 		$refresh_token=$配置文件["refresh_token"];
 
 		 	$request['url'] = $oauth_url."/token";
- 	 	$request['post_data']  = "client_id={$client_id}&redirect_uri={$redirect_uri}&client_secret={$client_secret}&refresh_token={$refresh_token}&grant_type=refresh_token";
+ 	  	$request['post_data']  = "client_id={$client_id}&redirect_uri={$redirect_uri}&client_secret={$client_secret}&refresh_token={$refresh_token}&grant_type=refresh_token";
  	  
 			$request['headers']= "Content-Type: application/x-www-form-urlencoded";
 			$resp = fetch::post($request);
@@ -355,7 +272,7 @@ function get_token($配置文件=array()){
 		
 		}
     
-
+}
 
 //////////////////////////////////////
 
@@ -386,6 +303,16 @@ if (!function_exists('e')) {
 	}
 }
 
+
+if(!function_exists("is_login")){
+    
+    
+    function is_login(){
+        if ($_COOKIE["admin"]==config("password")){return true;}else{return false;}
+        
+        
+    }
+}
 function get_absolute_path($path) {
     $path = str_replace(array('/', '\\', '//'), '/', $path);
     $parts = array_filter(explode('/', $path), 'strlen');
@@ -400,6 +327,8 @@ function get_absolute_path($path) {
     }
     return str_replace('//','/','/'.implode('/', $absolutes).'/');
 }
+
+
 
 !defined('CONTROLLER_PATH') && define('CONTROLLER_PATH', ROOT.'controller/');
 
@@ -424,9 +353,15 @@ function splitlast($str, $split)
     return $tmp;
 }
 
+///////
 
 
 
-   
+
+
+
+
+
+
 
 

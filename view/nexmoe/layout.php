@@ -1,11 +1,3 @@
-
-<?php 
-
-$var=explode("/",$_SERVER["REQUEST_URI"]);
-$驱动器=$var["1"];
-
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,17 +5,22 @@ $驱动器=$var["1"];
     	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
     	<title><?php e($title.' - '.config('site_name'));?></title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@0.4.1/dist/css/mdui.min.css" >
-    	<script src="https://cdn.jsdelivr.net/npm/mdui@0.4.1/dist/js/mdui.min.js" ></script>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    	<script src="https://cdn.jsdelivr.net/gh/axios/axios@0.19.2/dist/axios.min.js"></script>
+    	<script src="//cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mdui@0.4.1/dist/js/mdui.min.js" ></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     	<script src="//cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>	
     	<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
-    	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
-    	<link rel="shortcut icon" href="https://i.shangc.net/article/20190312/1a30c7effb168cbdb794098c476be875.jpg">
-
-	 <style>
-		.mdui-appbar .mdui-toolbar{
+    	<style>
+    	
+.mdui-appbar .mdui-toolbar{
 			height:64px;
 			font-size: 15px;
+			background-image: url(https://cdn.jsdelivr.net/gh/742481030/oneindex@777/bodyback.jpeg) ;
+		
 		}
        	.mdui-toolbar>*{
 			padding: 0 6px;
@@ -62,6 +59,7 @@ $驱动器=$var["1"];
 		}
 		#instantclick-bar {
         		background: white;
+        		
         	}
 		.mdui-video-fluid {
             height: -webkit-fill-available;
@@ -96,25 +94,58 @@ $驱动器=$var["1"];
 		#dl-header{margin:0}
 		#dl-section{padding-top:10px}
 		#dl-latest{position:relative;top:50%;transform:translateY(-50%)}
+		
+		.mdui-typo.mdui-shadow-3 {background-color: rgba(255, 255, 255, 0.6);}
+        .nexmoe-item {background-color: rgba(255, 255, 255, 0.6);}
+        .mdui-row{margin-right: 1px;margin-left: 1px;}
+         body {
+         width: -webkit-fill-available;
+        height: -webkit-fill-available;
+        background-size: cover;
+        <?php if(!oneindex::is_mobile()):?>
+         background-image: url(https://cdn.jsdelivr.net/gh/742481030/oneindex@777/bodyback.jpeg) !important;
+           background-position: center 56px;
+        background-repeat: no-repeat;
+         background-attachment: fixed;
+         <?php else : ?>
+          background-image: url(https://cdn.jsdelivr.net/gh/742481030/oneindex@9.9/mobileback.png) !important;
+        background-position: center 48px;
+         background-attachment: fixed;
+          background-repeat: no-repeat;
+         <?php endif?>
+      
+        
+}
 	</style>
 </head>
 <body class=" mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-pink   ">
-	<header class="mdui-appbar mdui-appbar-fixed mdui-color-theme mdui-appbar-inset">	
-	<div class="mdui-toolbar mdui-color-theme">
+	<header class="mdui-appbar mdui-appbar-fixed mdui-color-blue mdui-appbar-inset">	
+	<div class="mdui-toolbar mdui-color-red">
         <span class="mdui-btn  mdui-typo-headline mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}" mdui-tooltip="{content: '菜单'}"><i class="mdui-icon material-icons">menu</i></span>
-		<a href="/" class="mdui-typo-headline"><?php e(config('site_name'));?></a>
-		<?php foreach((array)$navs as $n=>$l):?>
-			<i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
-			<a href="<?php e("/".$驱动器.$l);?>"><?php e($n);?></a>
-		<?php endforeach;?>
 		<div class="mdui-toolbar-spacer"></div>
-		<a href="javascript:thumb();" id="thumb" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '切换显示'}"><i class="mdui-icon material-icons">format_list_bulleted</i></a>
-	</div>	
+	<?php if(is_login()): ?>
+
+<div id ="mangger" class="mdui-float-right " style="<?php  if($_COOKIE["moveitem"]): ?>display:block<?php endif;?><?php  if($_COOKIE["moveitem"]==""): ?>display:none<?php endif;?>">
+
+<button class="mdui-btn mdui-btn-icon  "onclick="moveitem()"><i class="mdui-icon material-icons">content_cut</i></button>
+<button class="mdui-btn mdui-btn-icon  " onclick="dellistitem()"><i class="mdui-icon material-icons">delete</i></button>
+<button class="mdui-btn mdui-btn-icon  " onclick="pastitem()"><i class="mdui-icon material-icons">content_paste</i></button>
+
+<button class="mdui-btn mdui-btn-icon  "><i class="mdui-icon material-icons">share</i></button>
+
+</div>
+
+
+<?php endif; ?>
+	
+
 	</header>
 
-<div class="mdui-drawer mdui-drawer-close mdui-color-indigo-50" id="main-drawer">
+	
+<div class="mdui-drawer mdui-drawer-close mdui-color-indigo-50" id="main-drawer"  style="
+background-repeat: no-repeat;	background-image: url(https://cdn.jsdelivr.net/gh/742481030/oneindex@777/bodyback.jpeg) !important; ">
 	<div class="mdui-grid-tile">
-		<a href="javascript:;"><img src="https://i.shangc.net/article/20190312/1a30c7effb168cbdb794098c476be875.jpg"/></a>
+		<a href="javascript:;"></a>
 		<div class="mdui-grid-tile-actions mdui-grid-tile-actions-gradient">
 			<div class="mdui-grid-tile-text">
 				<div class="mdui-grid-tile-title"><?php e($title.' - '.config('site_name'));?></div>
@@ -134,31 +165,24 @@ $驱动器=$var["1"];
 		
 		<?php 
 		
-		
-$filess = scandir(ROOT."config/");
-//显示
-
-count($filess);
-unset($filess[0]);
-unset($filess[1]);
-unset($filess[2]);
-$meme=$filess;
-foreach ($meme as $v)
-{
-    
-    $v=str_replace(".php","",$v);
-    
-    echo '
+		$filess = scandir(ROOT."config/");
+ foreach ($filess as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) continue;
+        if ('default.php' == $part) continue;
+         if ('uploads.php' == $part) continue;
+          if ('uploaded.php' == $part) continue;
+           if ('base.php' == $part) continue;
+        else {
+             $v=str_replace(".php","",$part);
+          echo '
     <a href="/'.$v.'" class="mdui-list-item mdui-ripple">
-			<i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+			<i class="mdui-list-item-icon mdui-icon material-icons">cloud</i>
 			<div class="mdui-list-item-content">'.$v.'</div>
 		</a>
     ';
-    
+        }}
 
-
-}
-	
 	if($_COOKIE["admin"]==config("password@base"))	
 	echo'
 	  
@@ -171,21 +195,55 @@ foreach ($meme as $v)
 		
 		
 		?>
-		
-		
-		
-		
-		
-		
-		
+
     		<?php e(config('drawer'));?>
 	</div>
 </div>
   
  
+ 
+
+<ul class="mdui-menu" id="menu">
+  
+    <li class="mdui-menu-item">
+        
+        <a href="javascript:;" onclick="deldel()"; class="mdui-ripple">刷新</a>
+    </li>
+    
+    
+    
+     <li class="mdui-menu-item">
+        <a href="javascript:;" class="mdui-ripple" onclick="renamebox()";>重命名</a>
+    </li>
+    <li class="mdui-menu-item">
+        <a href="javascript:;" class="mdui-ripple"  onclick="delitem()"; >删除</a>
+    </li>
+   
+      <li class="mdui-menu-item">
+        <a href="/admin" class="mdui-ripple">系统设置</a>
+    </li>
+</ul>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 <div class="mdui-container">
 	<div class="mdui-container-fluid"></div>
     	<?php view::section('content');?>
-</div>
+    	<!---------------------243---------------------->
+                     </div>               </div>
 </body>
+
+
+
 </html>

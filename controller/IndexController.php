@@ -5,21 +5,150 @@ class IndexController{
 	private $path;
 	private $items;
 	private $time;
-
+    static $驱动器;
+     static $请求路径;
 	function __construct(){
-	    global $配置文件;
+	    
+  
+	    
+$varrr=explode("/",$_SERVER["REQUEST_URI"]);
+$驱动器=$varrr["1"] ;array_splice($varrr,0, 1);unset($varrr['0']); $请求路径 = implode("/", $varrr);$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径); $url=$请求路径;
+ if ($驱动器==""){
+     $驱动器="default";
+ }
+ self::$驱动器=$驱动器;
+ self::$请求路径=$请求路径;
+ 
+define('CACHE_PATH', ROOT.'cache/'.$驱动器."/");if(!file_exists (CACHE_PATH)){  mkdir(CACHE_PATH); }
+ cache::$type = empty( config('cache_type') )?'secache':config('cache_type');
+
+if (file_exists(ROOT.'config/'.$驱动器.'.php')) {
+    $配置文件 = include (ROOT.'config/'.$驱动器.'.php'); }
+ else
+ if (!file_exists(ROOT.'config/base.php') or !file_exists(ROOT.'config/default.php') ) {
+      header('Location: /install.php');}
+
+	///////////////////////////////////初始化配置文件start//////////////////////////////////////
+  onedrive::$client_id =  $配置文件["client_id"];
+  onedrive::$client_secret =$配置文件["client_secret"];
+  onedrive::$redirect_uri = $配置文件["redirect_uri"];
+  onedrive::$api_url = $配置文件["api_url"];
+  onedrive::$oauth_url = $配置文件["oauth_url"];
+  onedrive::$typeurl=$配置文件["api"] ;
+  onedrive::$access_token=access_token($配置文件,$驱动器);
+	//global $当前目录id;
+//	$当前目录id=onedrive::pathtoid($配置文件["access_token"],$请求路径);
+if($_GET["this"]=="path")
+{
+    
+    echo $当前目录id=onedrive::pathtoid($配置文件["access_token"],$请求路径);
+    exit;
+    
+    
+}
+////////////文件管理////////////////////////////
+if($_GET["filemanger"]=="move")
+{
+   
+    $id=($_GET["id"]);
+  $id=str_replace("\"","",$id);
+ $id=str_replace("[","",$id);
+  $id=str_replace("]","",$id);
+
+  $ids=explode(",",$id);
+  var_dump($ids);
+    $newid=$_GET["newid"];
+   onedrive::批量移动($ids,$newid);
+  
+     
+    exit;
+    
+    
+    
+}
+//新建文件夹
+if($_GET["create_folder"])
+{
+    onedrive::create_folder( $请求路径,$_GET["create_folder"]);
+    exit;
+}
+//删
+if($_GET["delitem"])
+{$ss=$_GET["delitem"];
+    var_dump($ss);exit;
+    onedrive::delete($_GET["delitem"]);
+    exit;
+}
+//改
+
+if($_GET["rename"]){
+     onedrive::rename($_GET["rename"],$_GET["name"]);
+    exit;
+}
+//上传
+//	var_dump($_SERVER["REQUEST_URI"]);
+//	echo $_GET["action"];
+if ($_GET["action"]=="upbigfile")
+{
+        $filename=  $_GET['upbigfilename'];
+        $path=$请求路径.$filename;
+        $path = onedrive::urlencode($path);
+		$path = empty($path)?'/':":/{$path}:/";
+	    $token=$配置文件["access_token"];
+		$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
+		$request['url']= $配置文件["api"].$path."createUploadSession";
+	    $request['post_data'] = '{"item": {"@microsoft.graph.conflictBehavior": "rename"}}';
+		$resp = fetch::post($request);
+		$data = json_decode($resp->content, true);
+			if($resp->http_code == 409){
+				return false;
+			}
+	
+		echo $resp->content;
+
+    exit;
+}
+	    
+	    
+	 
+	 
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	 
+
+	 
+	 
+	 
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+
+	    
+	    
+	    
+	    
+	    
+	    
+	   
  	
        	//分页页数
  		$this->z_page = 100;
        
-		$var=explode("/",$_SERVER["REQUEST_URI"]);
-        $驱动器=$var["1"];
-        array_splice($var,0, 1);
-        unset($var['0']);
-          $请求路径 = implode("/", $var);  
-         $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
-
-		
+	
 		
 
 	 	$paths = explode('/', rawurldecode($请求路径));
@@ -44,32 +173,33 @@ class IndexController{
 		$this->items = $this->items($this->path);
 	}
 
-	
+    
+   
+    
 	function index(){
-	   
-	 
-	    
 	  
-	    
-	    if ($this->path=="/"){
-	          if($this->items==NUll){
-	         // echo "数据空";
-	          require(ROOT."del.php");
-	        //  header("refresh: 0.1");
-	          
-	      }
-	        
-	    }
-	    
-	    
-	    
-	    
-	    
+
+
+////////////http方法//////////
+
+switch($_SERVER["REQUEST_METHOD"]){
+    case "DELETE":
+       
+       onedrive::delpath()
+       ;exit;
+
+   
+    
+     default:break;
+}
+        //验证缓存是否异常
+       	 $this->checkcache();
+
 		//是否404
 		$this->is404();
 
 		$this->is_password();
-
+	
 		//header("Expires:-1");
 	//	header("Cache-Control:no_cache");
 	//	header("Pragma:no-cache");
@@ -79,8 +209,60 @@ class IndexController{
 		}else{//dir
 			return $this->dir();
 		}
+	
+		
+		
 	}
 
+
+    function checkcache(){
+        if(file_exists(ROOT."config/".self::$驱动器.".php")){
+ if ($this->path=="/"){
+	          if($this->items==NUll){
+	          echo " ";
+	        if (function_exists('opcache_reset')) {
+                opcache_reset();
+            }
+	    // oneindex::refresh_cache(self::$请求路径);
+	      //  header("refresh: 1");
+	       echo'
+	     <script>
+	   
+	     function deldel(){
+      
+     
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function() {
+    if(this.readyState === 4) {
+    console.log(this.responseText);
+
+    location.reload();
+
+
+   
+     }
+    });
+
+xhr.open("GET", "/del.php");
+ xhr.send();
+}
+	     deldel();
+	     </script>
+	       
+	       ';
+	      exit;
+	      }
+	        
+	    }
+}else{
+    	http_response_code(404);
+		view::load('404')->show();
+		die();
+}
+
+        
+    }
 	//判断是否加密
 	function is_password(){
 		if(empty($this->items['.password'])){
@@ -89,7 +271,7 @@ class IndexController{
 			$this->items['.password']['path'] = get_absolute_path($this->path).'.password';
  		}
 		
-		$password = $this->get_content($this->items['.password']);
+		$password = $this->get_content2($this->items['.password']);
 		list($password) = explode("\n",$password);
 		$password = trim($password);
 		unset($this->items['.password']);
@@ -102,7 +284,8 @@ class IndexController{
 	}
 
 	function password($password){
-		if(!empty($_POST['password']) && strcmp($password, $_POST['password']) === 0){
+		if(!empty($_REQUEST['password']) && strcmp($password, $_REQUEST['password']) === 0){
+		    echo $_POST['password'];
 			setcookie(md5($this->path), $_POST['password']);
 			return true;
 		}
@@ -151,7 +334,7 @@ class IndexController{
 
 		if($this->items['README.md']){
 			$this->items['README.md']['path'] = get_absolute_path($this->path).'README.md';
-			$readme = $this->get_content($this->items['README.md']);
+			$readme = $this->get_content2($this->items['README.md']);
 			$Parsedown = new Parsedown();
 			$readme = $Parsedown->text($readme);
 			//不在列表中展示
@@ -160,7 +343,7 @@ class IndexController{
 
 		if($this->items['HEAD.md']){
 			$this->items['HEAD.md']['path'] = get_absolute_path($this->path).'HEAD.md';
-			$head = $this->get_content($this->items['HEAD.md']);
+			$head = $this->get_content2($this->items['HEAD.md']);
 			$Parsedown = new Parsedown();
 			$head = $Parsedown->text($head);
 			//不在列表中展示
@@ -246,7 +429,14 @@ class IndexController{
 		return $navs;
 	}
 
-	static function get_content($item){
+
+
+
+
+
+
+
+	static function get_content2($item){
 		$content = cache::get('content_'.$item['path'], function() use ($item){
 			$resp = fetch::get($item['downloadUrl']);
 			if($resp->http_code == 200){
@@ -255,6 +445,33 @@ class IndexController{
 		}, config('cache_expire_time') );
 		return $content;
 	}
+
+
+
+
+static function get_content($item){
+		$content = cache::get('content_'.$item['path'], function() use ($item){
+		    
+		    
+			$resp = fetch::get($item['downloadUrl']);
+			if($resp->http_code == 200){
+			    return '<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+axios.get("'.$item['downloadUrl'].'")
+  .then(function (response) {
+    console.log(response);
+    document.write(response.data)
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+</script>';
+				return $resp->content;
+			}
+		}, config('cache_expire_time') );
+		return $content;
+	}
+
 
 	//404
 	function is404(){

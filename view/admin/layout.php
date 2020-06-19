@@ -14,7 +14,7 @@
     <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
     <a href="./" target="_blank" class="mdui-typo-headline mdui-hidden-xs">首页</a>
     <div class="mdui-toolbar-spacer"></div>
-    <a href="<?php echo $root?>?/logout"><i class="mdui-icon material-icons">&#xe8ac;</i> 登出</a>
+    <a href="#" onclick="logout()"><i class="mdui-icon material-icons">&#xe8ac;</i> 登出</a>
   </div>
 </header>
 <?php $root = get_absolute_path(dirname($_SERVER['SCRIPT_NAME']));?>
@@ -29,10 +29,7 @@
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b8;</i>
       <div class="mdui-list-item-content">sharepint设置</div>
     </a>
-    <a href="<?php echo $root?>?/admin/drives" class="mdui-list-item">
-      <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b8;</i>
-      <div class="mdui-list-item-content">多盘设置</div>
-    </a>
+    
     <a href="<?php echo $root?>?/admin/cache" class="mdui-list-item">
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe53b;</i>
       <div class="mdui-list-item-content">页面缓存</div>
@@ -48,10 +45,7 @@
       <div class="mdui-list-item-content">图床设置</div>
     </a>
 
-    <a href="<?php echo $root?>?/admin/upload" class="mdui-list-item">
-      <i class="mdui-list-item-icon mdui-icon material-icons">&#xe2c6;</i>
-      <div class="mdui-list-item-content">上传管理</div>
-    </a>
+   
 
     <a href="<?php echo $root?>?/admin/setpass" class="mdui-list-item">
       <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88d;</i>
@@ -75,6 +69,10 @@
 </div>
 <script>
 	$("a[href='<?php echo'?'.(route::get_uri());?>']").addClass("mdui-text-color-blue");
+  function logout() {
+        document.cookie = "admin=; path=/";
+        location.href = "/";
+    }
 </script>
 </body>
 

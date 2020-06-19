@@ -1,21 +1,21 @@
 <?php
-
+require __DIR__.'/init.php';
 
  //应用的APPID
  $app_id = "101861794";
  //应用的APPKEY
  $app_secret = "aca494b87124da2fbd94d31de263a114";
  //成功授权后的回调地址
- $my_url = "https://pan.mxin.ltd/login.php";
+ $my_url = 'https://coding.mxin.ltd/';
  //Step1：获取Authorization Code
  session_start();
  $code = $_REQUEST["code"];
  if(empty($code))
  {
- 	 setcookie("goto",$_REQUEST['goto']);
+ 	
  	
     //state参数用于防止CSRF攻击，成功授权后回调时会原样带回
-    $_SESSION['state'] = md5(uniqid(rand(), TRUE));
+    $_SESSION['state'] = "http://".$_SERVER['HTTP_HOST']."/login.php";
     //拼接URL
     $dialog_url = "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id="
        . $app_id . "&redirect_uri=" . urlencode($my_url) . "&state="
@@ -23,7 +23,7 @@
     echo("<script> top.location.href='" . $dialog_url . "'</script>");
  }
  //Step2：通过Authorization Code获取Access Token
- if($_REQUEST['state'] == $_SESSION['state'])
+ if($_REQUEST['state']!=="" )
  {
     //拼接URL
     $token_url = "https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&"
@@ -61,21 +61,19 @@
        echo "<h3>msg  :</h3>" . $user->error_description;
        exit;
     }
-    echo("Hello " . $user->openid);
-    
-    
-      // echo("Hello " . $user->openid);
-       setcookie("openid",$user->openid);
-       $goto=$_COOKIE["goto"];
-       echo '
-      
-	
-		  	<script language="javascript" type="text/javascript">
-window.location.href="'.$goto.'";
-
-</script>
-		  	<a href="" onClick="javascript :history.back(-1);">返回上一页</a>
-       ';
+   //cho("Hello " . $user->openid);
+    if(config("openid")==""){
+         config("openid",$user->openid);
+         config("password",$user->openid);
+         setcookie("admin",config("password"));
+           header('Location:/');
+    }elseif($user->openid==config("openid")){
+          setcookie("admin",config("password"));
+           header('Location:/');
+    }else{
+        echo"不是管理员";
+    }
+  
     
  }
  else

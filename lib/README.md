@@ -1,13 +1,7 @@
 ## 预览地址  
 [pan.mxin.ltd](https://pan.mxin.ltd/)
-温馨提示管理员退出再次登陆采用oauth授权登陆,如果不使用注销admincontroll 43行代码,
 必须设置伪静态
-支持cli 文件上传下载,
-支持世纪互联国际版国内版,同济大学sharepoint
-直接文件管理,移动删除,上传下载 预览,
-执行php one.php 会提示用法,
-多盘模式
-php one.php upload:file 本地文件 远程路径 驱动器
+
 
 其他说明
 
@@ -23,6 +17,62 @@ if ($rule_0 = "21"){
 rewrite ^/(.*)$ /index.php?/$1 last;
 }
 ```
+重要:如设置了伪静态去除/?/,需把view/nexmoe/list.php的173和179行的"&s=1"改为"?s"(或者改为以post方式请求这个链接，我不会改啊)
+               
+2.后台侧边栏代码示例(可放自定义的css/js)
+```
+    <div class="mdui-collapse-item">
+        <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">folder</i>
+            <div class="mdui-list-item-content">Test</div>
+            <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+        </div>
+        <div class="mdui-collapse-item-body mdui-list">
+            <a href="/?/456" class="mdui-list-item mdui-ripple ">456</a>
+        </div>
+	<div class="mdui-collapse-item-body mdui-list">
+            <a href="/?/345" class="mdui-list-item mdui-ripple ">345</a>
+        </div>      
+    </div>
+
+    <a href="/?/234" class="mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">folder</i>
+        <div class="mdui-list-item-content">234</div>
+    </a>
+    
+    <a href="#" class="mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">message</i>
+        <div class="mdui-list-item-content">Telegram频道</div>
+    </a>
+    
+    <span class="mdui-list-item mdui-ripple" id="example-bottom">
+        <i class="mdui-list-item-icon mdui-icon material-icons">attach_money</i>
+        <div class="mdui-list-item-content">打赏</div>
+    </span>
+    
+    <a href="#" class="mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">bubble_chart</i>
+        <div class="mdui-list-item-content">Blog</div>
+    </a>
+    
+    <a href="#" class="mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">info_outline</i>
+       <div class="mdui-list-item-content">关于</div>
+    </a>
+
+<script>
+var $$ = mdui.JQ;
+$$('#example-bottom').on('click', function () {
+  mdui.snackbar({
+    message: '<img src="/qr.png"/>',
+    position: 'top'
+  });
+});
+</script>
+
+```
+
+----------------------------------------------------------------------------------------------
 
 # oneindex
 OneDrive Directory Index
@@ -46,11 +96,6 @@ OneDrive Directory Index
               
 
 ## change log:
-## 
-20-06-18  代码有点乱,10.0版本后将重构.
-20-06-17  管理员模式不使用缓存
-20-06-17  增加并发删除移动api
-20-06-16  优化上传  
 20-06-14  文件批量移动功能(debug)  
 20-06-13  文件批量删除(debug)  
 20-06-12  增加主题背景  
@@ -58,7 +103,7 @@ OneDrive Directory Index
 20-06-07  文件管理/删除/重命名  
 20-06=07  修复md文件全屏  
 20-06=07  修复加密文件夹无法验证密码  
-20-06=06  增加重命名文件方法  
+20-06=06  增加重命名文件方法   
 20-06=06  增加删除文件方法  
 20-06=06  修复重建缓存  
 20-06-05 cli 功能增加列表 删除文件创建文件夹  
@@ -68,14 +113,14 @@ OneDrive Directory Index
 20-06-05   增加离线下载功能(开发中  
 20—06-02: 添加侧边栏网盘导航  
 20-06-01: 修复首页空白问题  
-20-05-29: 增加sharepoint站点id自动获取工具,账户显示,空间显示.
+20-05-29: 增加sharepoint站点id自动获取工具,账户显示,空间显示  
 20-05-24: 移除cli模式  
 20-05-25: 完成自动配置  
 20-05-24: 完成多盘配置  
 20-05-21: 添加防盗链接  
 20-05-20: 移除pdfjs  
 20-05-19: 静态资源cdn 使用jsdevil  
-18-03-29: 更新直链获取机制、缓存机制，避免频繁访问的token失效  
+18-03-29: 更新直链获取机制、缓存机制，避免频繁访问的token失效   
 18-03-29: 解决非英文编码问题  
 18-03-29: 添加onedrive共享的起始目录 功能  
 18-03-29: 添加rewrite的配置文件  

@@ -1,13 +1,18 @@
+
+
 <?php view::layout('layout')?>
-<?php 
-if ($_SERVER["REQUEST_URI"]=="/")
-{
-   header("location:/default");
-}
-////
-/////////
+
+
+
+<?php view::begin('content');?>
+
+<!-----------------list1----------------------------->
+<?php
 $var=explode("/",$_SERVER["REQUEST_URI"]);
 $驱动器=$var["1"];
+if($驱动器==""){
+  $驱动器="default"; 
+}
 array_splice($var,0, 1);
 unset($var['0']);
 
@@ -20,8 +25,6 @@ $请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
  }
 $next=$_GET["page"]+1;
 $uppage=$_GET["page"]-1;
-
-//////////
 
 
 
@@ -36,6 +39,17 @@ $uppage=$_GET["page"]-1;
       }
     }
   ?>
+     	
+<script>
+var 驱动器 = "<?php echo $驱动器; ?>"
+var 请求路径= "<?php echo $请求路径; ?>"
+
+
+ var move= "<?php echo $me=str_replace("\"","\\\"",$_COOKIE["moveitem"]);
+ ?>";
+</script>
+
+
 <?php 
 function file_ico($item){
   $ext = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
@@ -51,9 +65,6 @@ function file_ico($item){
   return "insert_drive_file";
 }
 ?>
-
-<?php view::begin('content');?>
-	
 <div class="mdui-container-fluid">
 <?php if($head):?>
 <div class="mdui-typo" style="padding: 20px;">
@@ -97,13 +108,18 @@ function file_ico($item){
     display: none; 
 </style>
 
+
 <div class="nexmoe-item">
 <div class="mdui-row">
 	<ul class="mdui-list">
 		<li class="mdui-list-item th" style="padding-right:36px;">
+		     <label class="mdui-checkbox">
+  <input type="checkbox" value=""  id="sellall" onclick="checkall()">
+  <i class="mdui-checkbox-icon"></i></label>
 		  <div class="mdui-col-xs-12 mdui-col-sm-7">文件 <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="downward">expand_more</i></div>
 		  <div class="mdui-col-sm-3 mdui-text-right">修改时间 <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i></div>
 		  <div class="mdui-col-sm-2 mdui-text-right">大小 <i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i></div>
+		  
 		</li>
 		<?php if($path != '/'):?>
 		<li class="mdui-list-item mdui-ripple">
@@ -120,33 +136,56 @@ function file_ico($item){
 			  <div class="mdui-col-sm-3 mdui-text-right"></div>
 			  <div class="mdui-col-sm-2 mdui-text-right"></div>
 		  	</a>
+		  	
+		  	
+		  	
+		  		<?php foreach((array)$navs as $n=>$l):?>
+			<i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+			<a href="<?php e("/".$驱动器.$l);?>"><?php e($n);?></a>
+		<?php endforeach;?>
+	
+		  	
 		</li>
 		<?php endif;?>
 		
 		<?php foreach((array)$items as $item):?>
 			<?php if(!empty($item['folder'])):?>
 
-		<li class="mdui-list-item mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>" style="padding-right:36px;">
+		<li  class="mdui-list-item mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>" style="padding-right:36px; " >
+		    <label class="mdui-checkbox">
+  <input type="checkbox" value="<?php echo$item["id"] ?>" name="itemid"/ onclick="onClickHander()">
+  <i class="mdui-checkbox-icon"></i></label>
 		    
 		    
 		<a href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name'])."/";?>">
-			  <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+			  <div id="<?php echo$item["id"] ?>" class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons">folder_open</i>
 		    	<span><?php e($item['name']);?></span>
 			  </div>
 			  <div class="mdui-col-sm-3 mdui-text-right"><?php echo date("Y-m-d H:i:s", $item['lastModifiedDateTime']);?></div>
 			  <div class="mdui-col-sm-2 mdui-text-right"><?php echo onedrive::human_filesize($item['size']);?></div>
 		  	</a>
-		</li>
+		  
+		
+		  	
+		  	
+		  	
+		  	
+		  	
+		</li>	
+		  
+		
 			<?php else:?>
-		<li class="mdui-list-item file mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>">
+		<li id="<?php echo$item["id"] ?>" class="mdui-list-item file mdui-ripple" data-sort data-sort-name="<?php e($item['name']);?>" data-sort-date="<?php echo $item['lastModifiedDateTime'];?>" data-sort-size="<?php echo $item['size'];?>". > <label class="mdui-checkbox">
+  <input type="checkbox" value="<?php echo$item["id"] ?>" name="itemid"/ onclick="onClickHander()">
+  <i class="mdui-checkbox-icon"></i></label>
 			<a <?php echo file_ico($item)=="image"?'class="glightbox"':"";echo file_ico($item)=="ondemand_video"?'class="iframe"':"";echo file_ico($item)=="audiotrack"?'class="audio"':"";echo file_ico($item)=="insert_drive_file"?'class="dl"':""?> data-name="<?php e($item['name']);?>" data-readypreview="<?php echo strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));?>" href="<?php echo "/". $驱动器."/". $url.rawurlencode($item['name']);?>" target="_blank">
               <?php if(isImage($item['name']) and $_COOKIE["image_mode"] == "1"):?>
 			  <img class="mdui-img-fluid" src="<?php echo"/". $驱动器."/". $url.rawurlencode($item['name']);?>">
               <?php else:?>
-              <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+              <div  id="<?php echo$item["id"] ?>" class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 				<i class="mdui-icon material-icons"><?php echo file_ico($item);?></i>
-		    	<span><?php e($item['name']);?></span>
+		    	<span id="<?php echo$item["id"] ?>"><?php e($item['name']);?></span>
 			  </div>
 			  <div class="mdui-col-sm-3 mdui-text-right"><?php echo date("Y-m-d H:i:s", $item['lastModifiedDateTime']);?></div>
 			  <div class="mdui-col-sm-2 mdui-text-right"><?php echo onedrive::human_filesize($item['size']);?>
@@ -194,199 +233,201 @@ function file_ico($item){
 	<?php e($readme);?>
 </div>
 <?php endif;?>
+
 </div>
-<script src="//cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+	<?php if($_COOKIE["admin"]==config("password")):?>
+
+<!--//悬浮管理-->
+<div class="mdui-fab-wrapper" id="exampleFab"  mdui-fab="options">
+  <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
+    <!-- 默认显示的图标 -->
+    <i class="mdui-icon material-icons">add</i>
+    
+    <!-- 在拨号菜单开始打开时，平滑切换到该图标，若不需要切换图标，则可以省略该元素 -->
+    <i class="mdui-icon mdui-fab-opened material-icons" >touch_app</i>
+  </button>
+  <div class="mdui-fab-dial">
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink" onclick="uploadfietwo()" mdui-dialog="{target: '#exampleDialog'}"><i class="mdui-icon material-icons">backup</i></button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red " onclick="uploadfieone()" mdui-dialog="{target: '#exampleDialog'}"><i class="mdui-icon material-icons">file_upload</i></button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red " onclick="create_folder()"><i class="mdui-icon material-icons">add</i></button>
+    
+   
+  </div>
+</div>
+
+
+	<?php endif;?>
+
+
+
+
+<?php if(is_login()):?>
+
+
+
+
+
+
+
+<div class="mdui-dialog mdui-dialog-open" id="exampleDialog" style="top: 89.703px; display: none; height:auto;">
+          <div class="mdui-dialog-content" style="height: 665.594px;">
+            <div class="mdui-dialog-title">文件上传</div>
+   
+              <div id="upload_div" style="margin:0 0 16px 0;">
+                <div id="upload_btns" align="center" style="display:none"; >
+                    <select onchange="document.getElementById('upload_file').webkitdirectory=this.value;">
+                        <option value="">上传文件</option>
+                        <option value="1">上传文件夹</option>
+                    </select>
+                    <input id="upload_file" type="file" name="upload_filename" multiple="multiple" class=" layui-btn"   onchange="preup();">
+                    <input id="upload_submit" onclick="preup();" value="上传" type="button">
+                      </div>
+                </div>
+<br><br><br><br>
+          </div>
+          <div class="mdui-dialog-actions">
+           
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm="" onclick="uploadkill()">完成上传</button>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<?php endif;?>
+
+
+
+
+
+
+
+
+
+
+	<script src="/view/nexmoe/guest.js" ></script>
+
+<?php if(is_login()) :?>
+	<script src="/view/nexmoe/manger.js" ></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<?php endif;?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-----------------list405----------------------------->
+
+
+
+
+
+
+
+
+<?php  global $total; e(" 运行时间".$total."秒")?>
+
+
+
+
 <script>
-var $$ = mdui.JQ;
-$$(function() {
-    $$('.file .iframe').each(function() {
-        $$(this).on('click', function() {
-            layer.open({
-              type: 2,
-              title: '<a target="_blank" href="'+$$(this).attr('href')+"?s"+'">'+ $$(this).find('span').text()+'(点击新窗口打开)</a>', //如伪静态去除了/?/,需把"&s=1"改为"?s",或者改为以post请求这个链接//jia
-              //shadeClose: true,
-              move: false,
-              shade: false,
-              maxmin: true, 
-              area: ['100%', '100%'],
-              content: $$(this).attr('href')+"?s" //如伪静态去除了/?/,需把"&s=1"改为"?s",或者改为以post请求这个链接//le
-              ,min: function(layero){
-                  //zi;  
-                  layero.css({top: '90%'})
-              }
+     var $$ = mdui.JQ;
+    //监听鼠标右击事件 / 移动端长按事件
+    $$(document).on('contextmenu', function (e) {
+      //   console.log(e);
+
+        //0：移动端长按（iOS 测试未通过）
+        //2：电脑端右键
+        
+            e.preventDefault();//阻止冒泡，阻止默认的浏览器菜单
+
+            //鼠标点击位置，相对于浏览器
+            var _x = e.pageX,
+                _y = e.pageY;
+
+            let $div = $$("<div></div>").css({
+                position: 'absolute',
+                top: _y+'px',
+                left: _x+'px',
             });
-            return false;
-        });
+            $$('body').append($div);//创建临时DOM
+
+            // anchorSelector 表示触发菜单的元素的 CSS 选择器或 DOM 元素
+            // menuSelector 表示菜单的 CSS 选择器或 DOM 元素
+            // options 表示组件的配置参数，见下面的参数列表
+            // 完整文档列表：https://doc.nowtime.cc/mdui/menu.html
+            var instq = new mdui.Menu($div, '#menu');
+            instq.open();//打开菜单栏
+            $div.remove();//销毁创建的临时DOM
+            
+        
+        console.log(e);
+             console.log(e);(e.target.id);
+      if(e.target.id=="" | e.target.id <999999999999999){
+           instq.close();
+      }
+   Cookies.set('flieid', e.target.id, { expires: 0.025 });
+        // console.log(e.relatedTarget.tagName);
+        console.log(e.target.id);
     });
-	$('.file .dl').each(function () {
-        $(this).on('click', function () {
-            var form = $('<form target=_blank method=post></form>').attr('action', $(this).attr('href')).get(0);
-            $(document.body).append(form);
-            form.submit();
-            $(form).remove();
-            return false;
-        });
-    });
-}); 
-window.TC=window.TC||{};
-jQuery(".file .audio").click(function(e){
-            e.preventDefault();
-            TC.preview_audio(this);
-});
-TC.preview_audio = function(aud){
-    if(!TC.aplayer){
-        TC.aplayerList=[];
-        jQuery(".file .audio").each(function(){
-            var ext = jQuery(this).data("readypreview");
-                var n = jQuery(this).find("span").text();
-                var l = n.replace("."+ext,".lrc");
-                var la = jQuery('a[data-name="'+l+'"]');
-                var lrc = undefined;
-                if(la.length>0){
-                    lrc = la[0].href+"?s";
-                }
-                TC.aplayerList.push({
-                    name:n,
-                    url:this.href,
-                    artist:" ",
-                    lrc:lrc
-                });
-        })
-        jQuery('<div id="aplayer">').appendTo("body");
-        TC.aplayer = new APlayer({
-            container: document.getElementById('aplayer'),
-            fixed: true,
-            audio: TC.aplayerList,
-            lrcType: 3
-        });
-    }
-    var k=-1;
-    for(var i in TC.aplayerList){
-        if(TC.aplayerList[i].name==jQuery(aud).data("name")){
-            k=i;
-            break;
-        }
-    }
-    if(k>=0){
-        TC.aplayer.list.switch(k);
-        TC.aplayer.play();
-        TC.aplayer.setMode("normal");
-    }
-}
-	
-$ = mdui.JQ;
-$.fn.extend({
-    sortElements: function (comparator, getSortable) {
-        getSortable = getSortable || function () { return this; };
-
-        var placements = this.map(function () {
-            var sortElement = getSortable.call(this),
-                parentNode = sortElement.parentNode,
-                nextSibling = parentNode.insertBefore(
-                    document.createTextNode(''),
-                    sortElement.nextSibling
-                );
-
-            return function () {
-                parentNode.insertBefore(this, nextSibling);
-                parentNode.removeChild(nextSibling);
-            };
-        });
-
-        return [].sort.call(this, comparator).each(function (i) {
-            placements[i].call(getSortable.call(this));
-        });
-    }
-});
-var lightbox = GLightbox();
-function downall() {
-     let dl_link_list = Array.from(document.querySelectorAll("li a"))
-         .map(x => x.href) // 所有list中的链接
-         .filter(x => x.slice(-1) != "/"); // 筛选出非文件夹的文件下载链接
-
-     let blob = new Blob([dl_link_list.join("\r\n")], {
-         type: 'text/plain'
-     }); // 构造Blog对象
-     let a = document.createElement('a'); // 伪造一个a对象
-     a.href = window.URL.createObjectURL(blob); // 构造href属性为Blob对象生成的链接
-     a.download = "folder_download_link.txt"; // 文件名称，你可以根据你的需要构造
-     a.click() // 模拟点击
-     a.remove();
-}
-
-function thumb(){
-	if($('#thumb i').text() == "apps"){
-		$('#thumb i').text("format_list_bulleted");
-		$('.nexmoe-item').removeClass('thumb');
-		$('.nexmoe-item .mdui-icon').show();
-		$('.nexmoe-item .mdui-list-item').css("background","");
-	}else{
-		$('#thumb i').text("apps");
-		$('.nexmoe-item').addClass('thumb');
-		$('.mdui-col-xs-12 i.mdui-icon').each(function(){
-			if($(this).text() == "image" || $(this).text() == "ondemand_video"){
-				var href = $(this).parent().parent().attr('href');
-				var thumb =(href.indexOf('?') == -1)?'?t=220':'&t=220';
-				$(this).hide();
-				$(this).parent().parent().parent().css("background","url("+href+thumb+")  no-repeat center top");
-			}
-		});
-	}
-
-}	
-
-$(function(){
-
-
-	$('.icon-sort').on('click', function () {
-        let sort_type = $(this).attr("data-sort"), sort_order = $(this).attr("data-order");
-        let sort_order_to = (sort_order === "less") ? "more" : "less";
-
-        $('li[data-sort]').sortElements(function (a, b) {
-            let data_a = $(a).attr("data-sort-" + sort_type), data_b = $(b).attr("data-sort-" + sort_type);
-            let rt = data_a.localeCompare(data_b, undefined, {numeric: true});
-            return (sort_order === "more") ? 0-rt : rt;
-        });
-
-        $(this).attr("data-order", sort_order_to).text("expand_" + sort_order_to);
-    });
-
-  	
-  
-});
-  
-var ckname='image_mode';
-function getCookie(name) 
-{
-    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-    if(arr=document.cookie.match(reg))
-        return unescape(arr[2]); 
-    else
-        return null; 
-} 
-function setCookie(key,value,day){
-	var exp = new Date(); 
-	exp.setTime(exp.getTime() - 1); 
-	var cval=getCookie(key); 
-	if(cval!=null) 
-	document.cookie= key + "="+cval+";expires="+exp.toGMTString(); 
-	var date = new Date();
-	var nowDate = date.getDate();
-	date.setDate(nowDate + day);
-	var cookie = key+"="+value+"; expires="+date;
-	document.cookie = cookie;
-	return cookie;
-}
-$('#image_view').on('click', function () {
-	if($(this).prop('checked') == true){
-		setCookie(ckname,1,1);
-		window.location.href=window.location.href;
-	}else{
-		setCookie(ckname,0,1);
-		window.location.href=window.location.href;
-	}
-});
-  
+    
+    
 </script>
+
 <?php view::end('content');?>
+
+

@@ -1,5 +1,7 @@
 <?php
-
+ if (function_exists('opcache_reset')) {
+                opcache_reset();
+            }
 !defined('ROOT') && define('ROOT', str_replace("\\", "/", dirname(__FILE__)) . '/');
 
 
@@ -23,7 +25,7 @@
      }else{
       //如果是文件直接删除
       unlink($path.$val);
-      echo "删除成功";
+    echo"删除成功";
      }
     }
    }

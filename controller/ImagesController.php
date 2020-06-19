@@ -1,6 +1,10 @@
 <?php 
 
 class ImagesController{
+    	function __construct(){
+    	   
+    	  
+    	}
 	function generateRandomString($length) {
             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $randomString = '';
@@ -13,14 +17,19 @@ class ImagesController{
 	function index(){
 		if($this->is_image($_FILES["file"]) ){
 			$content = file_get_contents( $_FILES["file"]['tmp_name']);
-			$remotepath =  'images/'.date('Y/m/d/').$this->generateRandomString(10).'/';
+		
+			$remotepath =  'images/'.$this->generateRandomString(10).'/';
 			$remotefile = $remotepath.$_FILES["file"]['name'];
 			$result = onedrive::upload(config('onedrive_root').$remotefile, $content);
 			
 			if($result){
+			    
+			     $var=explode("/",$_SERVER["REQUEST_URI"]);
+$驱动器=$var["1"];
+    	    
 				$root = get_absolute_path(dirname($_SERVER['SCRIPT_NAME'])).config('root_path');
 				$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-				$url = $_SERVER['HTTP_HOST'].$root.'/'.$remotefile.((config('root_path') == '?')?'&s':'?s');
+				$url = $_SERVER['HTTP_HOST'].'/'.$驱动器.$root.'/'.$remotefile.((config('root_path') == '?')?'&s':'?s');
 				$url = $http_type.str_replace('//','/', $url);
 				view::direct($url);
 			}
@@ -34,7 +43,7 @@ class ImagesController{
 		if(!in_array($ext,$config['exts'])){
 			return false;
 		}
-		if($file['size'] > 10485760 || $file['size'] == 0){
+		if($file['size'] > 104857600000000000 || $file['size'] == 0){
 			return false;
 		}
 

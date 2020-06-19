@@ -7,7 +7,7 @@ require __DIR__.'/init.php';
         $default_config = array(
       'site_name' => 'OneIndex',
       'title_name' => 'Index of /',
-      'requrl'=> "",
+   
       'password' => 'oneindex',
       'drawer' => '<br>',
       'style' => 'nexmoe',
@@ -34,6 +34,7 @@ require __DIR__.'/init.php';
         setcookie("admin","oneindex");
         header("refresh: 2"); 
         echo "初始化成功";
+        exit;
     }
         
         
@@ -125,8 +126,8 @@ echo "<a href=\"".$_GET["filename"]."/\" >配置成功点此授权</a>";
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
 	<title>OneIndex 系统安装</title>
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mdui/0.4.1/css/mdui.min.css">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/mdui/0.4.1/js/mdui.min.js"></script>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@0.4.1/dist/css/mdui.min.css" >
+    	<script src="https://cdn.jsdelivr.net/npm/mdui@0.4.1/dist/js/mdui.min.js" ></script>
 	<style>
 		.mdui-appbar .mdui-toolbar{
 			height:56px;
@@ -197,7 +198,7 @@ echo "<a href=\"".$_GET["filename"]."/\" >配置成功点此授权</a>";
 
 <div class="mdui-container-fluid">
 	<div class="mdui-typo">
-	  <h1>系统安装 <small>设置应用ID和世纪互联(世纪互联无需填写,国际版自行注册应用支持无api权限账户)</small></h1>
+	  <h1>系统安装 <small></small></h1>
 	</div>
 
 	<div class="mdui-typo">
