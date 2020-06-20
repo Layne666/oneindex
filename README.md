@@ -47,6 +47,7 @@ OneDrive Directory Index
 
 ## change log:
 ## 
+20-06-20。 修复sharepoint 无法创建逻辑bug..
 20-06-18  代码有点乱,10.0版本后将重构.
 20-06-17  管理员模式不使用缓存
 20-06-17  增加并发删除移动api
