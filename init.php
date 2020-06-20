@@ -75,7 +75,30 @@ function access_token($配置文件,$驱动器){
  
     $token = $配置文件;
   
- 
+   
+  if($_GET["site"])
+    {
+     
+    $siteidurl=onedrive::get_siteidbyname($sitename,$配置文件["access_token"],$配置文件["api_url"]);
+   
+     if ($siteidurl==""){
+    echo   "获取失败重新获取";
+      echo '<form action="/'.$驱动器.'/ "  method="get">
+ 　　<input type="text" name="site" value ="/sites/名称" />
+ 　　<input type="submit" value="站点id" />
+ </form>';
+         exit;
+     }
+     echo $api=$配置文件["api_url"].'/sites/'.$siteidurl.'/drive/root';
+     
+        config("api@".$驱动器,$api);
+        echo "配置sharepoint成功<br>";
+        echo '<a href="/'.$驱动器.'">授权成功</a>';
+    	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
+        cache::clear_opcache();
+     
+     exit;
+ }
     ///////////////////已经授权////////////////
     if($token ["refresh_token"]!=="")//已经授权
     {
@@ -207,31 +230,7 @@ exit;
 }
  
 
-   
-  if($_GET["site"])
-    {
-     
-    $siteidurl=onedrive::get_siteidbyname($sitename,$配置文件["access_token"],$配置文件["api_url"]);
-   
-     if ($siteidurl==""){
-    echo   "获取失败重新获取";
-      echo '<form action="/'.$驱动器.'/ "  method="get">
- 　　<input type="text" name="site" value ="/sites/名称" />
- 　　<input type="submit" value="站点id" />
- </form>';
-         exit;
-     }
-     echo $api=$配置文件["api_url"].'/sites/'.$siteidurl.'/drive/root';
-     
-        config("api@".$驱动器,$api);
-        echo "配置sharepoint成功<br>";
-        echo '<a href="/'.$驱动器.'">授权成功</a>';
-    	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
-        cache::clear_opcache();
-     
-     exit;
- }
-
+ 
     return $token['access_token'];
   
   
