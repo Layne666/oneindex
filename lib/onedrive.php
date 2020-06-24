@@ -1,4 +1,6 @@
 <?php
+use GuzzleHttp\Client;
+use GuzzleHttp\Promise;
 	class onedrive{
 		static $client_id;
 		static $client_secret;
@@ -23,6 +25,36 @@
 			return $url;
 		}
 
+static function test($url,$type="cn"){
+    
+     $配置文件 =require(ROOT."config/default.php");
+    
+    if($type=="cn"){
+        $api="https://microsoftgraph.chinacloudapi.cn/v1.0/";
+    }else{
+          $api="https://graph.microsoft.com/v1.0/";
+    }
+     $apc=new Client([
+    'base_uri' => $api,
+    'headers' => [
+        'Accept' => 'application/json',
+        'Authorization' =>     $配置文件["access_token"],
+        'Content-Type' => 'application/json',
+    ],
+    'http_errors' => false
+]);
+
+    return json_decode($apc->get($url)->getBody());
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
 		//使用 $code, 获取 $refresh_token
 		static function authorize($code = ""){
 			$client_id = self::$client_id;
@@ -99,7 +131,8 @@
 		
 		//返回目录信息
 		static function dir($path="/"){
-			$request = self::request($path, "children?select=name,size,folder,@microsoft.graph.downloadUrl,lastModifiedDateTime,id");
+			$request = self::request($path, "children?select=name,size,folder,lastModifiedDateTime,id,@microsoft.graph.downloadUrl");
+			//
 			$items = array();
 			self::dir_next_page($request, $items);
 			//不在列表显示的文件夹
@@ -322,7 +355,23 @@ $mh = curl_multi_init();
 
 
 
+static function downloadbyid($itemid){
+    
+    $varrr=explode("/",$_SERVER["REQUEST_URI"]);
+    $驱动器=$varrr["1"] ;array_splice($varrr,0, 1);unset($varrr['0']); 
+    $配置文件=require(ROOT."config/".$驱动器.".php");
+    $token=$配置文件["access_token"];
+    $api=str_replace("root","items/",$配置文件["api"]) ;
+    
+    	$request['headers'] = "Authorization: bearer {$token}".PHP_EOL."Content-Type: application/json".PHP_EOL;
+              $request['url']=$api.$itemid;
+             $resp= fetch::get($request);
+            
+           $ss= json_decode($resp->content,true)["@microsoft.graph.downloadUrl"];
 
+    header('Location:'.$ss);
+   
+}
 
 
 

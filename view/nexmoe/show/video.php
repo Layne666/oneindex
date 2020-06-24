@@ -62,3 +62,5 @@ const dp = new DPlayer({
 });
 </script>
 
+<?php //view::end('content');
+exit;?>

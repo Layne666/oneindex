@@ -1,10 +1,13 @@
 <?php
-global $stime;
+
 $stime=microtime(true); 
 error_reporting(E_ALL & ~E_NOTICE);
 date_default_timezone_set('PRC');
 define('TIME', time());
+define('SOFTVERSION', 9.3);
 !defined('ROOT') && define('ROOT', str_replace("\\", "/", dirname(__FILE__)) . '/');
+!defined('CONFIG_PATH') && define('CONFIG_PATH', ROOT . 'config/');
+!defined('CONTROLLER_PATH') && define('CONTROLLER_PATH', ROOT.'controller/');
 require_once(ROOT.'vendor/autoload.php') ;
 //__autoload方法
 function i_autoload($className) {
@@ -25,7 +28,7 @@ spl_autoload_register('i_autoload');
  * config('@file');
  */
 if (!function_exists('config')) {
-	!defined('CONFIG_PATH') && define('CONFIG_PATH', ROOT . 'config/');
+
 	function config($key) {
 		static $configs = array();
 		list($key, $file) = explode('@', $key, 2);
@@ -99,6 +102,7 @@ function access_token($配置文件,$驱动器){
      
      exit;
  }
+ 
     ///////////////////已经授权////////////////
     if($token ["refresh_token"]!=="")//已经授权
     {
@@ -113,6 +117,7 @@ function access_token($配置文件,$驱动器){
                 {
                     $配置文件["expires_on"] = time()+ $newtoken['expires_in'];
             	    $配置文件["access_token"]=$newtoken["access_token"];
+            	    $配置文件["refresh_token"]=$newtoken["refresh_token"];
                     config('@'.$驱动器, $配置文件);
                    return $token['access_token'];
                 }
@@ -198,7 +203,9 @@ function access_token($配置文件,$驱动器){
 if($配置文件["oauth_url"]==""){return;
   	
 }else{
-
+if(!is_login()){echo " 未登陆";
+echo '<a href="/login.php">登陆</a>';
+exit;}
 
         $oauthurl=$配置文件["oauth_url"];
         $client_id=$配置文件["client_id"];
@@ -209,7 +216,9 @@ if($配置文件["oauth_url"]==""){return;
         $授权地址= $oauthurl."/authorize?client_id=".$client_id."&scope=offline_access+files.readwrite.all+Sites.ReadWrite.All&response_type=code&redirect_uri=https://coding.mxin.ltd&state=".$redirect_uri;
         echo '<a href="'.$授权地址.'">授权应用</a>';
 	cache::refresh_cache(get_absolute_path(config('onedrive_root')));
-	
+	if(!is_login()){echo " 未登陆";
+	echo '<a href="/login.php">登陆</a>';
+	exit;}
         // 清除php文件缓存
         cache::clear_opcache();
 
@@ -230,7 +239,7 @@ exit;
 }
  
 
- 
+
     return $token['access_token'];
   
   
@@ -307,7 +316,11 @@ if(!function_exists("is_login")){
     
     
     function is_login(){
-        if ($_COOKIE["admin"]==config("password")){return true;}else{return false;}
+        if ($_COOKIE["admin"]==config("password")){return true;}else{
+            
+            return false;
+            
+        }
         
         
     }
@@ -329,7 +342,7 @@ function get_absolute_path($path) {
 
 
 
-!defined('CONTROLLER_PATH') && define('CONTROLLER_PATH', ROOT.'controller/');
+
 
 
 
@@ -355,12 +368,44 @@ function splitlast($str, $split)
 ///////
 
 
+function check_version(){
+  return  fetch::get('https://pan.mxin.ltd/version.json')->content;
+    
+}
 
 
+/*
+$ss= check_version();
 
 
+if(SOFTVERSION<$ss)
+{ini_set('memory_limit', '228M');
+    $curl = curl_init();
+//设置抓取的url
+curl_setopt($curl, CURLOPT_URL, "https://pan.mxin.ltd/ondindex-9.21.tar.gz");
+//打开文件描述符
+$fp = fopen (ROOT."9.21.tar.gz", 'w+');
+curl_setopt($curl, CURLOPT_FILE, $fp);
+//这个选项是意思是跳转，如果你访问的页面跳转到另一个页面，也会模拟访问。
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($curl,CURLOPT_TIMEOUT,70);
 
+//执行命令
+curl_exec($curl);
+//关闭URL请求
+curl_close($curl);
+//关闭文件描述符
+fclose($fp);
 
+    
+    
+    echo "当前版本".SOFTVERSION;
+    echo " 最新版本".$ss;
+    
+  $phar = new PharData('9.21.tar.gz');
+     $phar->extractTo('./', null, true);
 
+    exit;
+}
 
-
+*/

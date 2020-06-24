@@ -204,7 +204,11 @@ background-repeat: no-repeat;	background-image: url(https://cdn.jsdelivr.net/gh/
  
 
 <ul class="mdui-menu" id="menu">
-  
+    <li class="mdui-menu-item">
+        
+        <a href="javascript:;" onclick="share()"; class="mdui-ripple">分享链接</a>
+    </li>
+    
     <li class="mdui-menu-item">
         
         <a href="javascript:;" onclick="deldel()"; class="mdui-ripple">刷新</a>

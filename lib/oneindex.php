@@ -1,4 +1,5 @@
 <?php
+
 	class oneindex{
 		static $dir = array();
 		static $file = array();

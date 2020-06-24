@@ -29,13 +29,25 @@ if (file_exists(ROOT.'config/'.$驱动器.'.php')) {
       header('Location: /install.php');}
 
 	///////////////////////////////////初始化配置文件start//////////////////////////////////////
+	if($配置文件["drivestype"]=="cn"){
+
+  onedrive::$api_url = "https://microsoftgraph.chinacloudapi.cn/v1.0";
+  onedrive::$oauth_url = "https://login.partner.microsoftonline.cn/common/oauth2/v2.0";
+	}else{
+	     onedrive::$api_url = "https://graph.microsoft.com/v1.0";
+         onedrive::$oauth_url = "https://login.microsoftonline.com/common/oauth2/v2.0";
+	}
   onedrive::$client_id =  $配置文件["client_id"];
   onedrive::$client_secret =$配置文件["client_secret"];
   onedrive::$redirect_uri = $配置文件["redirect_uri"];
-  onedrive::$api_url = $配置文件["api_url"];
-  onedrive::$oauth_url = $配置文件["oauth_url"];
+  //onedrive::$api_url = $配置文件["api_url"];
+ // onedrive::$oauth_url = $配置文件["oauth_url"];
   onedrive::$typeurl=$配置文件["api"] ;
   onedrive::$access_token=access_token($配置文件,$驱动器);
+  if(!is_login()){
+  if($配置文件["share"]=="false"){
+      echo "管理员可见";exit;
+  }}
 	//global $当前目录id;
 //	$当前目录id=onedrive::pathtoid($配置文件["access_token"],$请求路径);
 if($_GET["this"]=="path")
@@ -64,6 +76,12 @@ if($_GET["filemanger"]=="move")
     exit;
     
     
+    
+}
+if($_GET["downid"])
+{
+  onedrive::downloadbyid($_GET["downid"]) ;
+    exit;
     
 }
 //新建文件夹
@@ -180,18 +198,7 @@ if ($_GET["action"]=="upbigfile")
 	  
 
 
-////////////http方法//////////
 
-switch($_SERVER["REQUEST_METHOD"]){
-    case "DELETE":
-       
-       onedrive::delpath()
-       ;exit;
-
-   
-    
-     default:break;
-}
         //验证缓存是否异常
        	 $this->checkcache();
 
@@ -285,7 +292,7 @@ xhr.open("GET", "/del.php");
 
 	function password($password){
 		if(!empty($_REQUEST['password']) && strcmp($password, $_REQUEST['password']) === 0){
-		    echo $_POST['password'];
+		   
 			setcookie(md5($this->path), $_POST['password']);
 			return true;
 		}
@@ -305,7 +312,7 @@ xhr.open("GET", "/del.php");
 			$url = $_SERVER['REQUEST_URI'].'/';
 		}elseif(!is_null($_GET['t']) ){//缩略图
 			$url = $this->thumbnail($item);
-		}elseif($_SERVER['REQUEST_METHOD'] == 'POST' || !is_null($_GET['s']) ){
+		}elseif($_SERVER['REQUEST_METHOD'] == 'POST' || !is_null($_GET['s'])  ){
 			return $this->show($item);
 		}else{//返回下载链接
 			if (config('proxy_domain') != ""){
@@ -363,7 +370,7 @@ xhr.open("GET", "/del.php");
 					->with('head',$head)
 					->with('readme',$readme)
  					->with('page',$this->page)
- 					->with('totalpage',$this->totalpage);
+ 					->with('totalpage',$this->totalpage)->with('驱动器',self::$驱动器)->with('请求路径',self::$请求路径);
 	}
 
 	function show($item){

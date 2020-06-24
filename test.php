@@ -72,8 +72,8 @@ $clients = new Client([
 
 // Initiate each request but do not block
 $promises = array();
-    for ($i;$i<300;$i++){
-     $promises[$i] =  $clients->requestAsync('DELETE', 'https://graph.microsoft.com/v1.0/$metadata');
+    for ($i;$i<30;$i++){
+     $promises[$i] =  $clients->requestAsync('get', 'https://www.hostloc.com/forum-45-1.html');
     }
     
 
@@ -81,10 +81,11 @@ $promises = array();
 // Wait on all of the requests to complete.
 $results = Promise\unwrap($promises);
 
-echo $results[1]->getBody();
-echo $results[159]->getBody();
+
+
 foreach ($results as $k=>$v){
- //echo   $v->getBody();
+    echo "1";
+   $v->getBody();
     
 }
 $t2=microtime(true);

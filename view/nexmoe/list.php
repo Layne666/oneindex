@@ -7,25 +7,16 @@
 <?php view::begin('content');?>
 
 <!-----------------list1----------------------------->
-<?php
-$var=explode("/",$_SERVER["REQUEST_URI"]);
-$驱动器=$var["1"];
-if($驱动器==""){
-  $驱动器="default"; 
-}
-array_splice($var,0, 1);
-unset($var['0']);
+<?php 
 
- $请求路径 = implode("/", $var);  
- 
-$请求路径= str_replace("?".$_SERVER["QUERY_STRING"],"",$请求路径);
- $url=$请求路径;
+
  if ($_GET["page"]==""){
    $_GET["page"]=1;  
  }
 $next=$_GET["page"]+1;
 $uppage=$_GET["page"]-1;
 
+$url=$请求路径;
 
 
 
@@ -39,8 +30,13 @@ $uppage=$_GET["page"]-1;
       }
     }
   ?>
+     	<?php
+     		if($请求路径==""){$请求路径="/";}
      	
+     	if($_GET["type"]=="json"){
+     	 echo    json_encode($items);  exit;} ?>
 <script>
+
 var 驱动器 = "<?php echo $驱动器; ?>"
 var 请求路径= "<?php echo $请求路径; ?>"
 
@@ -147,7 +143,8 @@ function file_ico($item){
 		  	
 		</li>
 		<?php endif;?>
-		
+	
+	
 		<?php foreach((array)$items as $item):?>
 			<?php if(!empty($item['folder'])):?>
 
@@ -283,7 +280,7 @@ function file_ico($item){
                     <input id="upload_submit" onclick="preup();" value="上传" type="button">
                       </div>
                 </div>
-<br><br><br><br>
+<br><br><br><br><br><br><br><br>
           </div>
           <div class="mdui-dialog-actions">
            
@@ -417,14 +414,25 @@ function file_ico($item){
         
         console.log(e);
              console.log(e);(e.target.id);
+             console.log(e.path.a)
       if(e.target.id=="" | e.target.id <999999999999999){
            instq.close();
       }
+      
    Cookies.set('flieid', e.target.id, { expires: 0.025 });
         // console.log(e.relatedTarget.tagName);
         console.log(e.target.id);
     });
     
+    
+    
+    function share(){
+         var id = Cookies.get('flieid')
+          var url = document.domain;
+       alert ("https://"+url+'/'+驱动器+"/?downid="+id);
+   var ss=     $("#"+id).eq(1).attr("href")
+   
+    }
     
 </script>
 

@@ -16,11 +16,11 @@ $downloadUrl = $item['downloadUrl'];
 	<br>
 	<div class="mdui-row">
 	  <select class="mdui-select" mdui-select="{position: 'top'}" id="sel">
-	    <option value="<?php e($url);?>" selected>下载地址</option>
-	    <option value="<img src='<?php e($url);?>' />">引用地址(HTML)</option>
-	    <option value="![](<?php e($url);?>)">引用地址(Markdown)</option>
+	    <option value="<?php e( 'https://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?>" selected>下载地址</option>
+	    <option value="<img src='<?php e( 'https://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?>' />">引用地址(HTML)</option>
+	    <option value="![](<?php e( 'https://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?>)">引用地址(Markdown)</option>
 	  </select>
-	  <textarea class="mdui-textfield-input" id="val" readonly><?php e($url);?></textarea>
+	  <textarea class="mdui-textfield-input" id="val" readonly><?php e( 'https://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?></textarea>
 	</div>
 	<script type="text/javascript">
 	    window.onload = function() {
@@ -37,5 +37,5 @@ $downloadUrl = $item['downloadUrl'];
     </div>
 </div>
 
-<a href="<?php e($url);?>" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
+<a href="<?php e( 'https://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?>" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
 <?php view::end('content');?>

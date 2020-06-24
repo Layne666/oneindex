@@ -1,5 +1,17 @@
 <?php
+
 require __DIR__.'/init.php';
+
+ 
+//$phar = new Phar(ROOT.'index.js.zip');
+//$phar->extractTo('composer');
+
+
+
+
+//var_dump(onedrive::test("me/drive/root/children"));
+
+
 
 
 if (!file_exists(ROOT.'config/base.php') or !file_exists(ROOT.'config/default.php') ) {
@@ -13,7 +25,7 @@ switch($_SERVER["REQUEST_METHOD"]){
   case "POST":
       break;
      default:
-        
+       // route::any('{path:#all}', 'ApiController@'.$_SERVER["REQUEST_METHOD"]);exit;
          require_once(ROOT."lib/api.php");
          exit;
     
@@ -23,12 +35,13 @@ switch($_SERVER["REQUEST_METHOD"]){
 
 
 
-	 
+	
 	 
 
 
 /*
  *    系统后台
+ 
  */
 route::group(function () {
     return $_COOKIE['admin'] == config('password');
@@ -55,7 +68,7 @@ route::any('/admin/', function () {
     return view::direct(get_absolute_path(dirname($_SERVER['SCRIPT_NAME'])).'?/login');
 });
 
-define('VIEW_PATH', ROOT.'view/'.(config('style') ? config('style') : 'material').'/');
+define('VIEW_PATH', ROOT.'view/'.(config('style') ? config('style') : 'nexmoe').'/');
 /**
  *    OneImg.
  */
@@ -71,12 +84,7 @@ if (($_COOKIE['admin'] == config('password') || $images['public'])) {
 
 
 
-
-
-
-
-
- 
+  //route::any('/{path:#all}/items/', 'ImagesController@index');
 route::any('{path:#all}', 'IndexController@index');
 
 $etime=microtime(true);//获取程序执行结束的时间

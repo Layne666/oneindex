@@ -43,7 +43,8 @@ require __DIR__.'/init.php';
         
         
         if($_COOKIE["admin"] !==config("password@base"))
-        {die("未授权");}
+        {echo '<a href="/login.php">登陆</a>';
+            die("未授权");}
         
         
         
@@ -201,11 +202,6 @@ echo "<a href=\"".$_GET["filename"]."/\" >配置成功点此授权</a>";
 	  <h1>系统安装 <small></small></h1>
 	</div>
 
-	<div class="mdui-typo">
-      <h4 class="doc-article-title">
-	    填入<code>client_id</code>和<code>client_secret</code>
-      </h4>
-    </div>
 
 
 
@@ -224,47 +220,30 @@ echo "<a href=\"".$_GET["filename"]."/\" >配置成功点此授权</a>";
     世纪互联
   </label>
 
- 
-  
-  
-  
-  
   
   </div>
-  
-  	<div class="mdui-textfield mdui-textfield-floating-label mdui-textfield-has-bottom mdui-textfield">
-		
-		
-		
-			<i class="mdui-icon material-icons">https</i>
-			
-			<label class="mdui-textfield-label">配置文件名称</label>
-		
-  	<input type="text" type="text" class="mdui-textfield-input" name="filename" required value=""/>
-			<div class="mdui-textfield-error"></div>
-  
-  
-		<div class="mdui-textfield mdui-textfield-floating-label mdui-textfield-has-bottom mdui-textfield-not-empty">
-		
-		
+  <div class="mdui-textfield mdui-textfield-floating-label">
+  <label class="mdui-textfield-label">配置名称</label>
+  <input class="mdui-textfield-input" type="text" name=filename pattern="[a-zA-Z]+" required/>
+ <div class="mdui-textfield-error">名称只能是英文</div>
 		
 		
 
-	 <a class="mdui-btn mdui-btn-raised mdui-float-left" href="?step=0">上一步</a>
+
+
+
+<br>
+ <a class="mdui-btn mdui-btn-raised mdui-float-left" href="?step=0">上一步</a>
 	 <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit">下一步</button>
+
+
+</div>
+	</div>
+	
 	</form>
 
 
 
-
-
-
-
-
-</div>
-
-
-
-  	</div>
+  
 </body>
 </html>

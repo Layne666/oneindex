@@ -1,4 +1,5 @@
 <?php
+
 !defined('VIEW_PATH') && define('VIEW_PATH', 'view/');
 class view {
 	private $_view = array('file' => '', 'data' => array());

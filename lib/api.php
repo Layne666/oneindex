@@ -13,8 +13,8 @@ onedrive::$access_token=$access_token;
 onedrive::$typeurl=$配置文件["api"] ;
 
 if(!is_login()){
-   // echo "未授权";
-   // exit;
+    echo "未授权";
+    exit;
 }
 if ($_SERVER["REQUEST_METHOD"]=="MOVE"){
     echo " 移动文件";
