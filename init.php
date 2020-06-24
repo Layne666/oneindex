@@ -8,7 +8,7 @@ define('SOFTVERSION', 9.3);
 !defined('ROOT') && define('ROOT', str_replace("\\", "/", dirname(__FILE__)) . '/');
 !defined('CONFIG_PATH') && define('CONFIG_PATH', ROOT . 'config/');
 !defined('CONTROLLER_PATH') && define('CONTROLLER_PATH', ROOT.'controller/');
-require_once(ROOT.'vendor/autoload.php') ;
+//require_once(ROOT.'vendor/autoload.php') ;
 //__autoload方法
 function i_autoload($className) {
 	if (is_int(strripos($className, '..'))) {
