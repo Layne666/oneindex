@@ -24,7 +24,7 @@ rewrite ^/(.*)$ /index.php?/$1 last;
 
 ## 预览图
 
-![](http://file.layne666.cn/img/20191125233913.png)
+![](https://img.layne666.cn/images/20200814134651.png)
 
 ![](http://file.layne666.cn/img/20200211210637.png)
 
