@@ -9,6 +9,7 @@ class AdminController{
 	  'cache_type'=>'filecache',
 	  'cache_expire_time' => 3600,
 	  'cache_refresh_time' => 600,
+	  'onedrive_hide' => 'images',
 	  'root_path' => '',
 	  'show'=> array (
 	  	'stream'=>['txt'],
@@ -20,7 +21,7 @@ class AdminController{
 	    'code'=>['html','htm','php', 'css', 'go','java','js','json','txt','sh','md'],
 	    'doc'=>['csv','doc','docx','odp','ods','odt','pot','potm','potx','pps','ppsx','ppsxm','ppt','pptm','pptx','rtf','xls','xlsx']
 	  ),
-	  'images'=>['home'=>false,'public'=>false, 'exts'=>['jpg','png','gif','bmp']]
+	  'images'=>['home'=>false,'public'=>true, 'exts'=>['jpg','png','gif','bmp','jpeg']]
 	);
 	
 	function __construct(){

@@ -15,10 +15,11 @@ class ImagesController{
 		    //$filename = $_FILES["file"]['name'];
 		    $filename = $this->generateRandomString(10).'.'.substr(strrchr($_FILES["file"]['name'], '.'), 1);
 			$content = file_get_contents( $_FILES["file"]['tmp_name']);
-			$remotepath =  'images/'.date('Y/m/d/');
+			$images_path = '图床/';
+			$remotepath =  $images_path.date('Y/m/d/');
 			$remotefile = $remotepath.$filename;
 			$result = onedrive::upload(config('onedrive_root').$remotefile, $content);
-			
+			cache::clear();
 			if($result){
 				$root = get_absolute_path(dirname($_SERVER['SCRIPT_NAME'])).config('root_path');
 				$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
