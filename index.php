@@ -55,6 +55,8 @@ if( ($_COOKIE['admin'] == md5(config('password').config('refresh_token')) || $im
 	}
 }
 
+//API上传文件
+route::any('/api/v1/upload','ImagesController@upload');
 
 /**
  *    列目录

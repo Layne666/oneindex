@@ -21,7 +21,7 @@ class AdminController{
 	    'code'=>['html','htm','php', 'css', 'go','java','js','json','txt','sh','md'],
 	    'doc'=>['csv','doc','docx','odp','ods','odt','pot','potm','potx','pps','ppsx','ppsxm','ppt','pptm','pptx','rtf','xls','xlsx']
 	  ),
-	  'images'=>['home'=>false,'public'=>true, 'exts'=>['jpg','png','gif','bmp','jpeg']]
+	  'images'=>['home'=>false,'public'=>false,'exts'=>['jpg','png','gif','bmp','jpeg'],'authcode'=>'gDxNRqvo75q8cLwQ7lmMJRIdgq7EGMhJ']
 	);
 	
 	function __construct(){
@@ -104,6 +104,7 @@ class AdminController{
 			$config['home'] = empty($_POST['home'])?false:true;
 			$config['public'] = empty($_POST['public'])?false:true;
 			$config['exts'] = explode(" ", $_POST['exts']);
+			$config['authcode'] = $_POST['authcode'];
 			config('images@base',$config);
 		}
 		$config = config('images@base');
