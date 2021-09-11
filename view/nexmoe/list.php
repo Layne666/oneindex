@@ -120,7 +120,7 @@ function file_ico($item){
 <?php endif;?>
 </div>
 <script>
-$ = mdui.JQ;
+$ = mdui.$;
 
 $.fn.extend({
     sortElements: function (comparator, getSortable) {

@@ -12,7 +12,7 @@
         ></iframe>
 <a href="<?php e($url);?>" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent" style="z-index:99;"><i class="mdui-icon material-icons">file_download</i></a>
 <script>
-$ = mdui.JQ;
+$ = mdui.$;
 $(function(){  
       
     var sWidth=document.documentElement.clientWidth;  
