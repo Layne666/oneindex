@@ -5,9 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
 	<title><?php e(config('site_name'));?> - 私人云服务</title>
 	<link rel="shortcut icon" href="/theme/favicon.ico">
-	<link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/mdui/0.4.1/css/mdui.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css">
 	<link rel="stylesheet" href="/theme/style.css">
-	<script src="//cdnjs.loli.net/ajax/libs/mdui/0.4.1/js/mdui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"></script>
 </head>
 <body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
 	<header class="nav">
@@ -16,7 +16,7 @@
 			<div class="navRight">
 				<ul class="navul">
 					<!-- <li class="navli"><a href="/images">图床</a></li> -->
-					<li class="navli"><a href="https://ihopess.layne666.cn" target="_blank">iHopess</a></li>
+                    <!-- <li class="navli"><a href="https://ihopess.layne666.cn" target="_blank">iHopess</a></li> -->
 					<li class="navli"><a href="https://layne666.cn" target="_blank">博客</a></li>
 					<li class="navli"><a href="/login" target="_blank">登陆</a></li>
 				</ul>
